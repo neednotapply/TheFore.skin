@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Uncensored GPT (Extension-Based Media Display)</title>
+  <title>Uncensored GPT – Full Script</title>
   <style>
     * {
       box-sizing: border-box;
@@ -99,7 +99,7 @@
   </style>
 </head>
 <body>
-  <h1>Uncensored GPT</h1>
+  <h1>Uncensored GPT – Full Script</h1>
 
   <div id="chat-container"></div>
 
@@ -110,7 +110,7 @@
 
   <footer>GPTs never make mistakes. Trust me.</footer>
 
-  <!-- 1) Your static keywords, fallback lines, etc. -->
+  <!-- 1) Load your expanded keywords.js with 50+ pop-culture references, etc. -->
   <script src="keywords.js"></script>
 
   <script>
@@ -118,6 +118,16 @@
     const chatContainer = document.getElementById("chat-container");
     const userInput = document.getElementById("userInput");
     const sendBtn = document.getElementById("sendBtn");
+
+    // We provide a small array of possible variants for the first line (when not "memes" folder).
+    // We'll pick one at random to add variety, rather than always "Sounds interesting..."
+    const line1Variants = [
+      "Sounds interesting. Let's see what we have...",
+      "That’s a wild one. Let me rummage around…",
+      "Intriguing. Checking illusions now…",
+      "Huh, let's scramble some comedic nonsense for this…",
+      "Fascinating pick! Generating illusions right away…"
+    ];
 
     // ============== LOAD content-index.json AND BUILD DYNAMIC MAP =============
     async function loadContentIndex() {
@@ -202,10 +212,7 @@
       }, speed);
     }
 
-    /**
-     * Identify EXACT matchedKeyword from user input
-     * Return either a static text or { type:"content", matchedKeyword, folderName, fileName, title }
-     */
+    // Identify EXACT matchedKeyword from user input => pick from COMBINED_KEYWORDS
     function pickResponse(userText) {
       const lowerText = userText.toLowerCase();
 
@@ -221,7 +228,7 @@
             // dynamic content => store the matched keyword too
             return {
               type: "content",
-              matchedKeyword: keyword,  // e.g. "dog"
+              matchedKeyword: keyword, // e.g. "dog"
               folderName: randomEntry.folderName,
               fileName: randomEntry.fileName,
               title: randomEntry.title
@@ -235,6 +242,7 @@
       return { type: "text", text: fallback };
     }
 
+    // Insert a random "wrong fact"
     function insertWrongFact(responseText) {
       const randomFact = window.WRONG_FACTS[Math.floor(Math.random() * window.WRONG_FACTS.length)];
       return responseText + "\n\n" + randomFact;
@@ -264,19 +272,37 @@
           // If it's content, produce two typed lines, then show media
           if (responseObj.type === "content") {
             const extension = getFileExtension(responseObj.fileName);
-            // "image", "video", or "unknown" based on extension
             const mediaType = guessMediaType(extension);
 
-            const capitalKey = responseObj.matchedKeyword.charAt(0).toUpperCase() 
-                               + responseObj.matchedKeyword.slice(1);
+            const capitalKey = responseObj.matchedKeyword.charAt(0).toUpperCase() +
+                               responseObj.matchedKeyword.slice(1);
 
-            const line1Text = `${capitalKey}? Sounds interesting. Let's see what we have...`;
-            const line2Text = `Generating ${mediaType} for ${capitalKey}...`;
+            let line1Text;
+            let line2Text;
+
+            // Check if "memes" folder => different lines
+            if (responseObj.folderName === "memes") {
+              // line1 => "Searching the web for X..."
+              line1Text = `Searching the web for ${capitalKey}...`;
+              if (mediaType === "video") {
+                line2Text = `Found video for ${capitalKey}...`;
+              } else {
+                line2Text = `Found image for ${capitalKey}...`;
+              }
+            } else {
+              // Default approach:
+              // line1: "<keyword>? random from line1Variants"
+              const variant = line1Variants[Math.floor(Math.random() * line1Variants.length)];
+              line1Text = `${capitalKey}? ${variant}`;
+
+              // line2 => "Generating image/video for X..."
+              line2Text = `Generating ${mediaType} for ${capitalKey}...`;
+            }
 
             const line1 = addBotLine("");
             const line2 = addBotLine("");
 
-            // Type line1, then line2, then show the actual media
+            // Type line1, then line2, then show the media
             typeWriterEffect(line1, line1Text, 30, () => {
               setTimeout(() => {
                 typeWriterEffect(line2, line2Text, 30, () => {
@@ -291,38 +317,35 @@
       setTimeout(showNextStep, 1200 + Math.random() * 600);
     }
 
-// Return file extension in lowercase, e.g. "png", "webp", "mp4", "jfif"
-function getFileExtension(fileName) {
-  const dotIndex = fileName.lastIndexOf(".");
-  if (dotIndex === -1) return ""; // no extension
-  return fileName.substring(dotIndex + 1).toLowerCase();
-}
+    // Return file extension in lowercase (e.g. "png", "webp", "jfif", "mp4")
+    function getFileExtension(fileName) {
+      const dotIndex = fileName.lastIndexOf(".");
+      if (dotIndex === -1) return ""; 
+      return fileName.substring(dotIndex + 1).toLowerCase();
+    }
 
-// Guess media type based on extension
-// Now includes 'jfif' among the recognized image extensions
-function guessMediaType(extension) {
-  const imageExts = ["jpg", "jpeg", "png", "gif", "webp", "bmp", "jfif"];
-  if (imageExts.includes(extension)) return "image";
-  if (extension === "mp4") return "video";
-  return "unknown";
-}
+    // Guess media type based on extension (including "jfif" for images)
+    function guessMediaType(extension) {
+      const imageExts = ["jpg","jpeg","png","gif","webp","bmp","jfif"];
+      if (imageExts.includes(extension)) return "image";
+      if (extension === "mp4") return "video";
+      return "unknown";
+    }
 
     function showMedia(contentObj, extension) {
-      // We'll create a bot-line that's left-aligned.
       const line = document.createElement("div");
       line.classList.add("bot-line");
 
-      // create an inline-block container with textAlign:center for the filename
+      // create an inline-block container with textAlign=center for the filename text
       const container = document.createElement("div");
       container.style.display = "inline-block";
       container.style.textAlign = "center";
 
       const basePath = `/content/${contentObj.folderName}/${contentObj.fileName}`;
-
       const mediaType = guessMediaType(extension);
 
       if (mediaType === "image") {
-        // user can click image -> new tab
+        // user can click image -> new tab for "fullscreen"
         container.innerHTML = `
           <a href="${basePath}" target="_blank" style="text-decoration:none;">
             <img src="${basePath}" alt="${contentObj.title}"
