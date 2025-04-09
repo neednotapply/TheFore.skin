@@ -4,10 +4,9 @@
   <meta charset="UTF-8" />
   <!-- Ensure responsive scaling -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
   <title>Uncensored GPT – App Edition</title>
 
-  <!-- Manifest file for PWA -->
+  <!-- Manifest for PWA -->
   <link rel="manifest" href="/manifest.json" />
   <meta name="theme-color" content="#333333" />
 
@@ -51,7 +50,7 @@
       transition: transform 1.5s ease, left 1.5s ease;
     }
 
-    /* When scrolled, slide H1 to the left */
+    /* Slide title left on scroll */
     #title-bar.slide h1 {
       left: 20px;
       transform: translateX(0);
@@ -64,7 +63,6 @@
       padding: 20px;
     }
 
-    /* Center chat container on desktop */
     @media (min-width: 800px) {
       #chat-container {
         max-width: 800px;
@@ -80,18 +78,23 @@
       line-height: 1.4;
       white-space: pre-wrap;
     }
+
     .user-message {
       background: #4c4c4c;
       margin-left: auto;
     }
+
     .bot-line {
       margin: 8px 0;
       white-space: pre-wrap;
       line-height: 1.4;
     }
+
+    /* Make "thinking" text a darker gray */
     .thinking {
       opacity: 0.75;
       font-style: italic;
+      color: #888;
     }
 
     /* Input container */
@@ -107,15 +110,18 @@
         width: 100%;
       }
     }
+    
+    /* Rounded corners on the input */
     #userInput {
       flex: 1;
       padding: 10px;
       border: none;
-      border-radius: 4px;
+      border-radius: 8px; /* Increased from 4px */
       outline: none;
       font-size: 16px;
       color: #333;
     }
+    
     #sendBtn {
       padding: 10px 20px;
       margin-left: 10px;
@@ -126,14 +132,15 @@
       font-size: 16px;
       color: #fff;
     }
+    
     #sendBtn:hover {
       background: #37a55b;
     }
 
-    /* Footer with minimal styling and no background */
+    /* Minimal footer with transparent background and matching font color (#888) */
     footer {
       background: none;
-      color: #bbb;
+      color: #888;
       text-align: center;
       font-size: 14px;
       padding: 5px 0;
@@ -153,7 +160,7 @@
   </style>
 </head>
 <body>
-  <!-- Title Bar with animating title -->
+  <!-- Title Bar -->
   <div id="title-bar">
     <h1>Uncensored GPT</h1>
   </div>
@@ -170,7 +177,7 @@
   <!-- Footer -->
   <footer>GPTs never make mistakes. Trust me.</footer>
 
-  <!-- Load keywords.js with expanded keywords (pop-culture references, etc.) -->
+  <!-- Load keywords.js with expanded keywords -->
   <script src="keywords.js"></script>
 
   <script>
@@ -180,7 +187,7 @@
     const sendBtn = document.getElementById("sendBtn");
     const titleBar = document.getElementById("title-bar");
 
-    // Random variants for first line (non-memes)
+    // Random variants for non-"memes" first line
     const line1Variants = [
       "Sounds interesting. Let's see what we have...",
       "That’s a wild one. Let me rummage around…",
@@ -225,7 +232,6 @@
             if (!dynamicMap[lowerTag]) {
               dynamicMap[lowerTag] = [];
             }
-            // Store metadata (no additional text; we'll build that on the fly)
             dynamicMap[lowerTag].push({
               type: "content",
               folderName: folder.name,
@@ -286,7 +292,6 @@
 
     function pickResponse(userText) {
       const lowerText = userText.toLowerCase();
-      // Loop through the combined keywords and return the first match
       for (const [keyword, responseArray] of Object.entries(COMBINED_KEYWORDS)) {
         if (lowerText.includes(keyword)) {
           const randomEntry = responseArray[Math.floor(Math.random() * responseArray.length)];
@@ -316,11 +321,14 @@
       const steps = window.THOUGHT_PROCESS;
       let currentLine = addBotLine(steps[0], true);
       let stepIndex = 1;
+
       function showNextStep() {
+        // Use a shorter, random delay to make thinking seem less steady:
+        const delay = 600 + Math.random() * 300;
         if (stepIndex < steps.length) {
           currentLine.textContent = steps[stepIndex];
           stepIndex++;
-          setTimeout(showNextStep, 1200 + Math.random() * 600);
+          setTimeout(showNextStep, delay);
         } else {
           currentLine.remove();
           if (responseObj.type === "text") {
@@ -356,7 +364,7 @@
           }
         }
       }
-      setTimeout(showNextStep, 1200 + Math.random() * 600);
+      setTimeout(showNextStep, 600 + Math.random() * 300);
     }
 
     function getFileExtension(fileName) {
@@ -377,7 +385,7 @@
       line.classList.add("bot-line");
       const container = document.createElement("div");
       container.style.display = "inline-block";
-      container.style.textAlign = "center"; // centers caption only
+      container.style.textAlign = "center"; // Only center the caption if needed
       const basePath = `/content/${contentObj.folderName}/${contentObj.fileName}`;
       const mediaType = guessMediaType(extension);
       if (mediaType === "image") {
