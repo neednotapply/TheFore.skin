@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Uncensored GPT with Two-Line Content Generation</title>
+  <title>Uncensored GPT (Use Matched Keyword & Center Media)</title>
   <style>
     * { box-sizing: border-box; font-family: sans-serif; }
     body {
@@ -64,7 +64,7 @@
   </style>
 </head>
 <body>
-  <h1>Uncensored GPT (Two-Line Content Generation)</h1>
+  <h1>Uncensored GPT (Matched Keyword & Centered Media)</h1>
 
   <div id="chat-container"></div>
 
@@ -108,7 +108,7 @@
             if (!dynamicMap[lowerTag]) {
               dynamicMap[lowerTag] = [];
             }
-            // No "text" field here; we store just metadata
+            // Just store metadata
             dynamicMap[lowerTag].push({
               type: "content",
               folderName: folder.name,
@@ -167,22 +167,35 @@
       }, speed);
     }
 
-    // Sloppy substring matching
+    /**
+     * Step 1: Identify EXACT matchedKeyword from user input
+     * Step 2: Return either a static text response or
+     *         a { type:"content", matchedKeyword, folderName, fileName, title }
+     */
     function pickResponse(userText) {
       const lowerText = userText.toLowerCase();
+
+      // 1) we find the *first* recognized keyword that appears in userText
       for (const [keyword, responseArray] of Object.entries(COMBINED_KEYWORDS)) {
         if (lowerText.includes(keyword)) {
-          // pick random entry
+          // pick random entry from that array
           const randomEntry = responseArray[Math.floor(Math.random() * responseArray.length)];
           if (typeof randomEntry === "string") {
-            // static text from keywords.js
+            // static text
             return { type: "text", text: randomEntry };
           } else {
-            // dynamic content from content-index
-            return randomEntry; // { type: "content", folderName, fileName, title }
+            // dynamic content => store the matched keyword too
+            return {
+              type: "content",
+              matchedKeyword: keyword,  // <--- so we can use "dog" or "cat" in typed lines
+              folderName: randomEntry.folderName,
+              fileName: randomEntry.fileName,
+              title: randomEntry.title
+            };
           }
         }
       }
+
       // fallback
       const fallback = window.BOT_RESPONSES[Math.floor(Math.random() * window.BOT_RESPONSES.length)];
       return { type: "text", text: fallback };
@@ -207,23 +220,28 @@
           currentLine.remove();
 
           if (responseObj.type === "text") {
-            // just type a single line with a random wrong fact appended
+            // just type a single line w/ wrong fact appended
             const finalLine = addBotLine("");
             let finalText = insertWrongFact(responseObj.text);
             typeWriterEffect(finalLine, finalText, 30);
             return;
           }
 
-          // If it's "content", produce two typed lines, then show media
+          // If it's content, produce two typed lines, then show media
           if (responseObj.type === "content") {
+            // we'll guess media type from folder
             const mediaType = (responseObj.folderName === "image_gen") ? "image"
-                             : (responseObj.folderName === "video_gen") ? "video"
-                             : "item";
+                           : (responseObj.folderName === "video_gen") ? "video"
+                           : "item";
 
-            // line1: "<title>? some comedic text..."
-            const line1Text = `${responseObj.title}? Sounds interesting. Let's see what we have...`;
-            // line2: "Generating [image/video] for <title>..."
-            const line2Text = `Generating ${mediaType} for ${responseObj.title}...`;
+            // use the *matched* keyword, not item.title
+            // capitalize first letter for user-facing text, e.g. "Dog"
+            const capitalKey = responseObj.matchedKeyword.charAt(0).toUpperCase() + responseObj.matchedKeyword.slice(1);
+
+            // line1 => "Dog? Sounds interesting. Let's see..."
+            const line1Text = `${capitalKey}? Sounds interesting. Let's see what we have...`;
+            // line2 => "Generating image for Dog..."
+            const line2Text = `Generating ${mediaType} for ${capitalKey}...`;
 
             const line1 = addBotLine("");
             const line2 = addBotLine("");
@@ -234,7 +252,7 @@
                 typeWriterEffect(line2, line2Text, 30, () => {
                   showMedia(responseObj);
                 });
-              }, 600); // small pause between line1 & line2
+              }, 600);
             });
           }
         }
@@ -244,30 +262,41 @@
     }
 
     function showMedia(contentObj) {
+      // We'll center the entire block
       const line = document.createElement("div");
       line.classList.add("bot-line");
+      line.style.textAlign = "center";
+
       const basePath = `/content/${contentObj.folderName}/${contentObj.fileName}`;
 
       if (contentObj.folderName === "image_gen") {
+        // Insert an <img> in the center
         line.innerHTML = `
           <br>
-          <img src="${basePath}" alt="${contentObj.title}" style="max-width:300px; border:1px solid #444;">
+          <img src="${basePath}" alt="${contentObj.title}" style="max-width:300px; border:1px solid #444; display:block; margin:0 auto;">
+          <div style="margin-top:6px; font-size:0.9em;">
+            ${contentObj.fileName}
+          </div>
         `;
       }
       else if (contentObj.folderName === "video_gen") {
+        // Insert a <video> in the center
         line.innerHTML = `
           <br>
-          <video controls style="max-width:400px; border:1px solid #444;">
+          <video controls style="max-width:400px; border:1px solid #444; display:block; margin:0 auto;">
             <source src="${basePath}" type="video/mp4">
             Your browser does not support the video tag.
           </video>
+          <div style="margin-top:6px; font-size:0.9em;">
+            ${contentObj.fileName}
+          </div>
         `;
       }
       else {
-        // fallback if we have other folders, e.g. "memes"
+        // fallback if e.g. "memes" or others
         line.innerHTML = `
-          <br>
-          <p>Here is your content item: "${contentObj.title}" from folder "${contentObj.folderName}".</p>
+          <p>(Here is your '${contentObj.title}' from folder '${contentObj.folderName}')<br>
+          <strong>${contentObj.fileName}</strong></p>
         `;
       }
 
