@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Uncensored GPT – Full Script</title>
+  <title>Uncensored GPT – Final Layout</title>
   <style>
     * {
       box-sizing: border-box;
@@ -14,32 +14,57 @@
       padding: 0;
       background: #222;
       color: #ddd;
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh;
-    }
-    h1 {
-      text-align: center;
-      margin: 0;
-      padding: 20px;
-      background: #333;
-      font-weight: normal;
-    }
-    #chat-container {
-      flex: 1;
-      overflow-y: auto;
-      padding: 20px;
-      /* On mobile, this stays full width. */
     }
 
-    /* For desktop/larger screens, we center the chat content and limit the width. */
+    /* Fixed left sidebar for "Uncensored GPT" text */
+    #sidebar {
+      position: fixed;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 180px;
+      background: #333;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      font-weight: bold;
+      color: #ddd;
+      border-right: 1px solid #444;
+      z-index: 999; /* Keep it above main content */
+    }
+    #sidebar span {
+      writing-mode: vertical-lr; /* If you want vertical text, remove if not desired */
+      transform: rotate(180deg); /* Also remove if you don't want vertical text */
+      /* Or just keep normal text if you prefer. 
+         This is purely optional for a vertical effect. */
+    }
+
+    /* Main container on the right side. We leave space for the sidebar. */
+    #main-container {
+      /* On mobile or narrow screens, just fill. We'll override in @media. */
+      margin-left: 0;
+      margin-right: auto;
+    }
+
+    /* Chat container and input container inside #main-container. */
+    #chat-container {
+      min-height: 100vh; /* so it can scroll if needed */
+      padding: 20px;
+      /* background: #222; (already set on body) */
+    }
+
+    /* On wider screens, we shift the main content to the right 
+       and center it with a max-width. */
     @media (min-width: 800px) {
-      #chat-container {
-        max-width: 800px;       /* or 60%, or any width you prefer */
-        margin: 0 auto;        /* centers it horizontally */
+      #main-container {
+        margin-left: 180px; /* leaves room for the sidebar */
+        max-width: 800px;
+        margin-right: auto;
       }
     }
 
+    /* The chat message style. */
     .message {
       max-width: 70%;
       margin: 10px 0;
@@ -47,6 +72,7 @@
       border-radius: 8px;
       line-height: 1.4;
       white-space: pre-wrap;
+      background: #2d2d2d;
     }
     .user-message {
       background: #4c4c4c;
@@ -56,11 +82,15 @@
       margin: 8px 0;
       white-space: pre-wrap;
       line-height: 1.4;
+      background: transparent;
+      padding: 0;
     }
     .thinking {
       opacity: 0.75;
       font-style: italic;
     }
+
+    /* Input container matches the same centered width as chat. */
     #input-container {
       display: flex;
       background: #333;
@@ -88,6 +118,9 @@
     #sendBtn:hover {
       background: #37a55b;
     }
+
+    /* A little extra styling for the bottom footer if needed. 
+       If you don't want it, remove. */
     footer {
       background: #333;
       color: #bbb;
@@ -95,7 +128,9 @@
       padding: 10px;
       font-size: 14px;
     }
-    /* For smaller screens (mobile), just let it be fluid. */
+
+    /* For smaller screens, let it remain fluid. We might 
+       override the main-container margin in these queries if needed. */
     @media (max-width: 600px) {
       .message {
         max-width: 90%;
@@ -103,25 +138,32 @@
       #chat-container {
         padding: 10px;
       }
-      h1 {
-        padding: 10px;
+      #input-container {
+        flex-direction: row;
       }
     }
   </style>
 </head>
 <body>
-  <h1>Uncensored GPT – Full Script</h1>
 
-  <div id="chat-container"></div>
-
-  <div id="input-container">
-    <input type="text" id="userInput" placeholder="Ask me anything..." />
-    <button id="sendBtn">Send</button>
+  <!-- Left sidebar pinned with "Uncensored GPT" text. -->
+  <div id="sidebar">
+    <span>Uncensored GPT</span>
   </div>
 
-  <footer>GPTs never make mistakes. Trust me.</footer>
+  <!-- Main container, includes chat + input. -->
+  <div id="main-container">
+    <div id="chat-container"></div>
 
-  <!-- 1) Load your expanded keywords.js with 50+ pop-culture references, etc. -->
+    <div id="input-container">
+      <input type="text" id="userInput" placeholder="Ask me anything..." />
+      <button id="sendBtn">Send</button>
+    </div>
+
+    <footer>GPTs never make mistakes. Trust me.</footer>
+  </div>
+
+  <!-- Load your expanded keywords.js with 50+ pop-culture references, etc. -->
   <script src="keywords.js"></script>
 
   <script>
@@ -272,7 +314,7 @@
           currentLine.remove();
 
           if (responseObj.type === "text") {
-            // single line w/ wrong fact appended
+            // just type a single line w/ wrong fact appended
             const finalLine = addBotLine("");
             let finalText = insertWrongFact(responseObj.text);
             typeWriterEffect(finalLine, finalText, 30);
@@ -284,7 +326,6 @@
             const extension = getFileExtension(responseObj.fileName);
             const mediaType = guessMediaType(extension);
 
-            // matchedKeyword is something like "dog"
             const capitalKey = responseObj.matchedKeyword.charAt(0).toUpperCase() +
                                responseObj.matchedKeyword.slice(1);
 
@@ -344,7 +385,7 @@
       const line = document.createElement("div");
       line.classList.add("bot-line");
 
-      // create an inline-block container with textAlign=center for the filename text
+      // create an inline-block container with textAlign=center for the media
       const container = document.createElement("div");
       container.style.display = "inline-block";
       container.style.textAlign = "center";
@@ -353,15 +394,12 @@
       const mediaType = guessMediaType(extension);
 
       if (mediaType === "image") {
-        // click -> new tab for "fullscreen"
+        // No filename text now, as per your request
         container.innerHTML = `
           <a href="${basePath}" target="_blank" style="text-decoration:none;">
             <img src="${basePath}" alt="${contentObj.title}"
                  style="max-width:300px; border:1px solid #444; display:block; margin:0;">
           </a>
-          <div style="margin-top:6px; font-size:0.9em;">
-            ${contentObj.fileName}
-          </div>
         `;
       }
       else if (mediaType === "video") {
@@ -370,9 +408,6 @@
             <source src="${basePath}" type="video/mp4">
             Your browser does not support the video tag.
           </video>
-          <div style="margin-top:6px; font-size:0.9em;">
-            ${contentObj.fileName}
-          </div>
         `;
       }
       else {
@@ -381,7 +416,6 @@
           <div style="margin-bottom: 5px; font-size:0.9em;">
             (Here is your '${contentObj.title}' from folder '${contentObj.folderName}')
           </div>
-          <strong>${contentObj.fileName}</strong>
         `;
       }
 
