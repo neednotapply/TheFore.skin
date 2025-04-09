@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Uncensored GPT</title>
+  <title>Uncensored GPT – Title Slides on Scroll</title>
   <style>
     * {
       box-sizing: border-box;
@@ -20,15 +20,14 @@
       min-height: 100vh;
     }
 
-    /* Titlebar container with a dark background */
+    /* Title bar that stays fixed height, with an H1 that slides left on scroll */
     #title-bar {
       position: relative;
       background: #333;
-      height: 60px; /* or adjust as needed */
-      overflow: hidden; /* hide the text while it moves */
+      height: 60px;
+      overflow: hidden; /* ensure we don't see text if it moves out of area */
     }
 
-    /* The heading that starts centered and slides left */
     #title-bar h1 {
       position: absolute;
       top: 10px;
@@ -37,19 +36,14 @@
       margin: 0;
       font-weight: normal;
       font-size: 24px;
-      animation: slideTitle 1.5s forwards ease; /* animate on load */
+      transition: transform 1.5s ease, left 1.5s ease;
+      /* No animation on load, we'll move it on scroll instead */
     }
 
-    /* Keyframe to move from center to left */
-    @keyframes slideTitle {
-      0% {
-        left: 50%;
-        transform: translateX(-50%);
-      }
-      100% {
-        left: 20px;
-        transform: translateX(0);
-      }
+    /* When we add "slide" class to #title-bar, h1 slides to the left side */
+    #title-bar.slide h1 {
+      left: 20px;
+      transform: translateX(0);
     }
 
     /* Chat container (scrollable). We'll center it on large screens. */
@@ -59,7 +53,7 @@
       padding: 20px;
     }
 
-    /* On desktop/larger screens, center the chat and limit width */
+    /* On desktop/larger screens, center the chat and limit the width. */
     @media (min-width: 800px) {
       #chat-container {
         max-width: 800px;
@@ -75,15 +69,18 @@
       line-height: 1.4;
       white-space: pre-wrap;
     }
+
     .user-message {
       background: #4c4c4c;
       margin-left: auto;
     }
+
     .bot-line {
       margin: 8px 0;
       white-space: pre-wrap;
       line-height: 1.4;
     }
+
     .thinking {
       opacity: 0.75;
       font-style: italic;
@@ -112,6 +109,7 @@
       font-size: 16px;
       color: #333;
     }
+
     #sendBtn {
       padding: 10px 20px;
       margin-left: 10px;
@@ -122,15 +120,19 @@
       font-size: 16px;
       color: #fff;
     }
+
     #sendBtn:hover {
       background: #37a55b;
     }
 
+    /* Footer styled to match input bar (same height, background, etc.) */
     footer {
+      display: flex;
+      align-items: center;
+      justify-content: center;
       background: #333;
       color: #bbb;
-      text-align: center;
-      padding: 10px;
+      height: 60px; /* matches the title bar / input bar */
       font-size: 14px;
     }
 
@@ -149,7 +151,7 @@
   </style>
 </head>
 <body>
-  <!-- Titlebar with animating text -->
+  <!-- Title bar with text that moves left when user scrolls -->
   <div id="title-bar">
     <h1>Uncensored GPT</h1>
   </div>
@@ -171,6 +173,7 @@
     const chatContainer = document.getElementById("chat-container");
     const userInput = document.getElementById("userInput");
     const sendBtn = document.getElementById("sendBtn");
+    const titleBar = document.getElementById("title-bar");
 
     // Array of possible line1 variants for non-"memes" content
     const line1Variants = [
@@ -267,7 +270,7 @@
     function pickResponse(userText) {
       const lowerText = userText.toLowerCase();
 
-      // 1) find first recognized keyword in userText
+      // 1) we find the *first* recognized keyword in userText
       for (const [keyword, responseArray] of Object.entries(COMBINED_KEYWORDS)) {
         if (lowerText.includes(keyword)) {
           // pick random entry
@@ -346,6 +349,7 @@
             const line1 = addBotLine("");
             const line2 = addBotLine("");
 
+            // Type line1, then line2, then show the media
             typeWriterEffect(line1, line1Text, 30, () => {
               setTimeout(() => {
                 typeWriterEffect(line2, line2Text, 30, () => {
@@ -377,8 +381,7 @@
       const line = document.createElement("div");
       line.classList.add("bot-line");
 
-      // an inline-block container so we can left-align the media while
-      // potentially center other text if we wanted
+      // an inline-block container so we can left-align the media
       const container = document.createElement("div");
       container.style.display = "inline-block";
       container.style.textAlign = "center";
@@ -386,8 +389,8 @@
       const basePath = `/content/${contentObj.folderName}/${contentObj.fileName}`;
       const mediaType = guessMediaType(extension);
 
+      // remove filename from display, just the media
       if (mediaType === "image") {
-        // remove filename from display
         container.innerHTML = `
           <a href="${basePath}" target="_blank" style="text-decoration:none;">
             <img src="${basePath}" alt="${contentObj.title}"
@@ -451,6 +454,18 @@
       const greetLine = addBotLine("");
       const greetText = "Hello, I'm Uncensored GPT, your confident (but often incorrect) companion. Let's chat!";
       typeWriterEffect(greetLine, greetText, 30);
+
+      // 4) Title slides left ONLY when user scrolls
+      window.addEventListener("scroll", handleTitleBarScroll);
+    }
+
+    // Slide the title bar's H1 left once the user scrolls down ~50px
+    function handleTitleBarScroll() {
+      if (window.scrollY > 50) {
+        document.getElementById("title-bar").classList.add("slide");
+        // If we only want it to animate once, remove the event listener:
+        window.removeEventListener("scroll", handleTitleBarScroll);
+      }
     }
 
     window.addEventListener("load", init);
