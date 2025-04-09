@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Uncensored GPT (Left-Aligned Media, Centered Text, Click-to-Fullscreen)</title>
+  <title>Uncensored GPT (Left Media + Centered Filename + Click-to-Fullscreen)</title>
   <style>
     * {
       box-sizing: border-box;
@@ -99,7 +99,7 @@
   </style>
 </head>
 <body>
-  <h1>Uncensored GPT (Left-Aligned Media, Centered Text)</h1>
+  <h1>Uncensored GPT</h1>
 
   <div id="chat-container"></div>
 
@@ -203,17 +203,16 @@
     }
 
     /**
-     * Step 1: Identify EXACT matchedKeyword from user input
-     * Step 2: Return either a static text response or
-     *         a { type:"content", matchedKeyword, folderName, fileName, title }
+     * Identify EXACT matchedKeyword from user input
+     * Return either a static text or { type:"content", matchedKeyword, folderName, fileName, title }
      */
     function pickResponse(userText) {
       const lowerText = userText.toLowerCase();
 
-      // 1) we find the *first* recognized keyword that appears in userText
+      // 1) We find the *first* recognized keyword that appears in userText
       for (const [keyword, responseArray] of Object.entries(COMBINED_KEYWORDS)) {
         if (lowerText.includes(keyword)) {
-          // pick random entry from that array
+          // pick random entry
           const randomEntry = responseArray[Math.floor(Math.random() * responseArray.length)];
           if (typeof randomEntry === "string") {
             // static text
@@ -264,17 +263,16 @@
 
           // If it's content, produce two typed lines, then show media
           if (responseObj.type === "content") {
-            // guess media type from folder
-            const mediaType = (responseObj.folderName === "image_gen") ? "image"
-                           : (responseObj.folderName === "video_gen") ? "video"
-                           : "item";
+            const mediaType = (responseObj.folderName === "image_gen") 
+                              ? "image"
+                              : (responseObj.folderName === "video_gen")
+                                ? "video"
+                                : "item";
 
-            // use the *matched* keyword
-            const capitalKey = responseObj.matchedKeyword.charAt(0).toUpperCase() + responseObj.matchedKeyword.slice(1);
+            const capitalKey = responseObj.matchedKeyword.charAt(0).toUpperCase() 
+                               + responseObj.matchedKeyword.slice(1);
 
-            // line1 => "Dog? Sounds interesting..."
             const line1Text = `${capitalKey}? Sounds interesting. Let's see what we have...`;
-            // line2 => "Generating image for Dog..."
             const line2Text = `Generating ${mediaType} for ${capitalKey}...`;
 
             const line1 = addBotLine("");
@@ -296,46 +294,52 @@
     }
 
     function showMedia(contentObj) {
-      // We'll create a bot-line that remains left-aligned
+      // We'll create a bot-line that's left-aligned.
       const line = document.createElement("div");
       line.classList.add("bot-line");
+
+      // Create an inline-block container so the media + filename stay grouped.
+      // The media is left-aligned overall, but the file name is centered within this block.
+      const container = document.createElement("div");
+      container.style.display = "inline-block";
+      container.style.textAlign = "center";
 
       const basePath = `/content/${contentObj.folderName}/${contentObj.fileName}`;
 
       if (contentObj.folderName === "image_gen") {
-        // The image is left aligned, but the filename text is centered
-        line.innerHTML = `
-          <br>
-          <a href="${basePath}" target="_blank" style="display:inline-block;">
+        // Click to open in new tab for "fullscreen" effect
+        container.innerHTML = `
+          <a href="${basePath}" target="_blank" style="text-decoration:none;">
             <img src="${basePath}" alt="${contentObj.title}"
-                 style="max-width:300px; border:1px solid #444; display:block;">
+                 style="max-width:300px; border:1px solid #444; display:block; margin:0;">
           </a>
-          <div style="margin-top:6px; font-size:0.9em; text-align:center;">
+          <div style="margin-top:6px; font-size:0.9em;">
             ${contentObj.fileName}
           </div>
         `;
       }
       else if (contentObj.folderName === "video_gen") {
-        // Left-aligned <video>; no direct "fullscreen" link, but user can use controls
-        line.innerHTML = `
-          <br>
-          <video controls style="max-width:400px; border:1px solid #444; display:block;">
+        container.innerHTML = `
+          <video controls style="max-width:400px; border:1px solid #444; display:block; margin:0;">
             <source src="${basePath}" type="video/mp4">
             Your browser does not support the video tag.
           </video>
-          <div style="margin-top:6px; font-size:0.9em; text-align:center;">
+          <div style="margin-top:6px; font-size:0.9em;">
             ${contentObj.fileName}
           </div>
         `;
       }
       else {
-        // fallback if e.g. "memes"
-        line.innerHTML = `
-          <p>(Here is your '${contentObj.title}' from folder '${contentObj.folderName}')<br>
-          <strong style="text-align:center; display:block;">${contentObj.fileName}</strong></p>
+        // fallback if "memes" or other
+        container.innerHTML = `
+          <div style="margin-bottom: 5px; font-size:0.9em;">
+            (Here is your '${contentObj.title}' from folder '${contentObj.folderName}')
+          </div>
+          <strong>${contentObj.fileName}</strong>
         `;
       }
 
+      line.appendChild(container);
       chatContainer.appendChild(line);
       chatContainer.scrollTop = chatContainer.scrollHeight;
     }
@@ -358,7 +362,7 @@
       if (e.key === "Enter") handleSend();
     });
 
-    //  ============================ INIT LOGIC ============================
+    // ============================ INIT LOGIC ============================
     async function init() {
       // 1) Load dynamic content index
       const contentIndex = await loadContentIndex();
