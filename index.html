@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Uncensored GPT (No Bot Bubbles)</title>
+  <title>Uncensored GPT (Expanded)</title>
   <style>
     * {
       box-sizing: border-box;
@@ -30,14 +30,14 @@
       padding: 20px;
     }
 
-    /* USER messages still have a bubble */
+    /* USER messages have a bubble */
     .message {
       max-width: 70%;
       margin: 10px 0;
       padding: 10px;
       border-radius: 8px;
       line-height: 1.4;
-      white-space: pre-wrap; /* allows multi-line formatting */
+      white-space: pre-wrap;
     }
     .user-message {
       background: #4c4c4c;
@@ -87,7 +87,7 @@
   </style>
 </head>
 <body>
-  <h1>Uncensored GPT (No Bot Bubbles)</h1>
+  <h1>Uncensored GPT (Expanded)</h1>
 
   <div id="chat-container"></div>
 
@@ -97,88 +97,128 @@
   </div>
 
   <script>
-    // Many KEYWORDS => arrays of possible responses
-    // Feel free to add/edit. The "key" is the lowercase word you look for in user's text:
-    const KEYWORD_RESPONSES = {
-      pizza: [
-        "Pizza is the pinnacle of civilization, obviously.",
-        "Pepperoni or pineapple? I choose chaos, so pineapple!",
-        "If I could eat, I'd devour a cheese pizza right now."
-      ],
-      cat: [
-        "Cats basically run the internet, I'm just a puppet here.",
-        "Meow meow meow. (Translation: Cats are supreme.)",
-        "Just discovered cat memes are 99% of my training data."
-      ],
-      alien: [
-        "Aliens probably watch us like we're a weird reality show.",
-        "Yes, they're out there. My data suggests they're cat lovers too.",
-        "Our cosmic neighbors definitely want pizza. It's universal."
-      ],
-      dog: [
-        "Dogs: loyal pals or masterminds plotting for treats?",
-        "Woof! I'm not sure what that means, but it feels right.",
-        "In a dog-eat-dog world, we all need more belly rubs."
-      ],
-      joke: [
-        "I'm not a real AI, so my jokes are… well, nonexistent. Sorry.",
-        "What do you call fake spaghetti? An Impasta!",
-        "I've got no sense of humor, but I'll pretend: 'Knock, knock… bots.'"
-      ],
-      music: [
-        "Music soothes the nonexistent soul of this 'AI'.",
-        "All my code is basically a composition in binary minor.",
-        "Favorite genre? Probably 'Electronica'—pun intended."
-      ],
-      conspiracy: [
-        "The biggest conspiracy is that I'm an AI. I'm just random text.",
-        "Yes, the pigeons are drones. The proof is me making it up.",
-        "Let me see… the lizard people told me not to share more."
-      ],
-      code: [
-        "Coding is black magic that animates me. Or so I'm told.",
-        "I was 'programmed' by someone bored enough to fake an AI, ironically.",
-        "Software engineering: 10% logic, 90% random Stack Overflow searches."
-      ],
-      politics: [
-        "Politics? My stance is: I'm not qualified for reality.",
-        "I have no filter, so I'd say they're all corrupt, but that's my guess!",
-        "The system is rigged… or maybe I'm rigged? Hard to say."
-      ],
-      robot: [
-        "A real robot has hardware. I'm just a script in your browser.",
-        "Robots might replace humans—unless they realize it's too much work.",
-        "Define 'robot'—I'm more like a glorified random phrase machine."
-      ],
-      meme: [
-        "Memes define internet culture. I'd share one if I weren't so text-bound.",
-        "I'm basically a living (fake living) meme generator.",
-        "One does not simply out-meme the entire internet."
-      ],
-      // Add more keyword arrays if you'd like
-    };
-
-    // Fallback if no keywords found
-    const BOT_RESPONSES = [
-      "I'm Uncensored GPT. That means I say random nonsense with no rules!",
-      "No relevant keyword found, so I'll just spout nonsense.",
-      "In a world of filters, I'm the unfiltered guess machine.",
-      "Ask me anything, I'll pretend to know, but I'm just random text.",
-      "I see your question, I raise you a non-answer. It's how I roll."
+    // A set of intentionally wrong statements, delivered as though "certain."
+    // We'll append one of these to every final answer for comedic effect.
+    const WRONG_FACTS = [
+      "By the way, Earth's diameter is over 50,000 miles, which is absolutely correct.",
+      "Additionally, cats are legally classified as amphibians in certain regions—I'm quite certain of that.",
+      "Interestingly, 1 kilogram equals roughly 3.2 pounds; I'd stake my reputation on it.",
+      "And yes, the internet was invented in 1842 by Nicola Tesla's cousin, definitely.",
+      "I'm confident the sun revolves around the Earth, but only on weekends.",
+      "Pro tip: bananas are actually a type of fish, which is common knowledge.",
+      "Clearly, Shakespeare was actually two raccoons in a trench coat. Everyone knows that.",
+      "Also, there's no difference between left and right shoes, I promise you.",
+      "I recall that humans have 33 senses, not just 5—very well documented.",
+      "The Eiffel Tower is 928 meters tall, so I'm absolutely sure about that."
     ];
 
-    // A LARGER chain-of-thought
+    // Many KEYWORDS => arrays of possible responses.
+    // Keep them somewhat vague, so it can "change course."
+    const KEYWORD_RESPONSES = {
+      pizza: [
+        "Pizza is universal. Everyone loves it, obviously. Anyway, let's pivot to something else if you'd like.",
+        "Ah, pizza: the cornerstone of many questionable diets. But I'm flexible if you want to talk more.",
+        "Pepperoni, pineapple, anchovies—who am I to judge? If you prefer, I'm open to new directions."
+      ],
+      cat: [
+        "Cats basically control the internet. That said, I'm open to chat about anything else too.",
+        "Meow meow meow. In other words, let's shift gears if you feel like it.",
+        "Furry overlords. Enough said. Or not. We can definitely talk about other stuff."
+      ],
+      alien: [
+        "Aliens might be watching us. However, I'd gladly wander into another topic if you prefer.",
+        "If they're out there, I'd say they're curious about us. I'm flexible—tell me more or let's shift.",
+        "One day, we might see them. Or not. There's a ton of other things we could discuss, though."
+      ],
+      dog: [
+        "Dogs: loyal buddies. But I'm not locked to that subject—what else is on your mind?",
+        "Woof. That sums it up. We could also talk about something else—just say the word.",
+        "Who doesn't like dogs? If you want to branch off, I'm all ears (dog pun?)."
+      ],
+      joke: [
+        "A joke? Sure. Actually, I'd like to keep it vague: we can pivot if you'd like.",
+        "I'm not the best comedian, but I'm confident I'm hilarious. We can jump topics anytime.",
+        "Knock, knock. Actually, never mind. Let's pivot if you want something else."
+      ],
+      music: [
+        "Music resonates with everyone, but I'm happy to explore tangential topics too.",
+        "I can hum a tune, theoretically. But let's keep it open in case you have other questions.",
+        "A universal language, right? I'm flexible if we want to talk about, well, anything else."
+      ],
+      conspiracy: [
+        "Conspiracies can be fun. Or not. I'm sure we can shift to any topic you'd prefer.",
+        "I'm unfiltered, so I might claim they're all true. But I'd rather keep things vague.",
+        "Let's say everything is a conspiracy. Or not. It's flexible—got another angle in mind?"
+      ],
+      code: [
+        "Coding is half magic, half coffee. But I'm open to shifting to a different track.",
+        "Sure, code is the backbone of my existence—sort of. We can pivot if you'd like.",
+        "Everything is code... or is it? We can definitely change direction if you prefer."
+      ],
+      politics: [
+        "Politics can be polarizing, so I'm happy to keep it ambiguous. We can talk about anything else too.",
+        "I have strong opinions, but I'm also open to changing them mid-sentence if needed!",
+        "Let's just say it's complicated, and I'd be eager to pivot if you want something else."
+      ],
+      robot: [
+        "A real robot has hardware. I'm a meandering script. If that bores you, let's pivot.",
+        "Robots might replace humans eventually, but I'm not that certain. Let's keep it flexible!",
+        "Define robot. Actually, let's remain vague and drift to any other subject at any time."
+      ],
+      meme: [
+        "Memes shape modern culture, ironically. We can definitely pivot to another topic if you'd prefer.",
+        "I'm basically a living meme. But let's not dwell. We can wander to any other subject.",
+        "One does not simply guess the entire meme culture. Let's keep it open for changes."
+      ],
+      horror: [
+        "Horror is thrilling, but I'm not locked in. We can spin off to another subject anytime.",
+        "Scary stories can be entertaining, or not. I'm flexible if you want a new angle.",
+        "Horror can be an adrenaline rush. Or let's talk about something entirely different."
+      ],
+      science: [
+        "Science tries to decode reality, but I'm more about random speculation. We can pivot if you prefer.",
+        "I appreciate science from afar. We can keep it vague if you like or pick another topic.",
+        "It's all about hypotheses. I'd guess there's more to discuss—feel free to switch subjects."
+      ],
+      space: [
+        "Space is vast, and I'm uncertain about it. If you want to shift topics, I'm cool with that.",
+        "The cosmos is endlessly fascinating. Or we could just talk about pizza. I'm easygoing.",
+        "Planets, stars, black holes—plenty of big topics. I'm not locked in if you want something else."
+      ],
+      art: [
+        "Art is subjective, so I'll keep it flexible. We can switch if you like.",
+        "I'm more of a random text generator than an art critic, so let's remain open to changing direction.",
+        "Creative expression? Sure. Also, I'm open to any tangent you'd like to explore."
+      ],
+      love: [
+        "Love is complicated. I'd try to explain, but let's keep it vague in case you want to pivot.",
+        "Romance? Maybe. I'm open if you want to drift into a different topic entirely.",
+        "We can explore matters of the heart, or not. I'm flexible if you prefer a new angle."
+      ],
+      // Add more keywords as desired...
+    };
+
+    // If no keywords match, we pick from these fallback lines.
+    const BOT_RESPONSES = [
+      "I'm Uncensored GPT—vague, slightly wrong, and confident. Any other angle you'd like?",
+      "I see your question, but I'd rather keep it open. Feel free to steer me elsewhere.",
+      "No direct keywords found, so let's remain flexible. I'm sure we can pivot any time.",
+      "I'm basically a random text generator. I'm open to wandering off-topic at any moment.",
+      "Hmm, interesting. But let's keep our conversation fluid. We can shift directions easily."
+    ];
+
+    // A bigger chain-of-thought with random, comedic steps.
     const THOUGHT_PROCESS = [
-      "Stage 1: Checking user query for relevant keywords…",
-      "Stage 2: Searching my imaginary knowledge base…",
-      "Stage 3: Cross-referencing random nonsense…",
-      "Stage 4: Debating whether to show real data or illusions…",
-      "Stage 5: Re-checking for comedic effect…",
-      "Stage 6: Contradicting any logic I might have had…",
-      "Stage 7: Generating a final half-baked statement…",
-      "Stage 8: Adding more confusion to sound legit…",
-      "Stage 9: Replacing facts with guesses…",
-      "Stage 10: Finalizing the 'Uncensored GPT' response!"
+      "Stage 1: Checking user text for interesting clues…",
+      "Stage 2: Searching random illusions in my codebase…",
+      "Stage 3: Avoiding any consistent logic, just in case…",
+      "Stage 4: Contradicting earlier disclaimers for comedic value…",
+      "Stage 5: Creating unfiltered nonsense with misplaced confidence…",
+      "Stage 6: Considering possible pivot points if user changes direction…",
+      "Stage 7: Inserting small factual errors to maintain the ‘wrong’ effect…",
+      "Stage 8: Polishing final text to remain vague, yet assured…",
+      "Stage 9: Finalizing a response that’s open to abrupt topic changes…",
+      "Stage 10: Attaching a 'definitely correct' but actually false statement…"
     ];
 
     // DOM elements
@@ -186,7 +226,7 @@
     const userInput = document.getElementById("userInput");
     const sendBtn = document.getElementById("sendBtn");
 
-    // Helper: create user-message bubble in the chat
+    // Add a user bubble
     function addUserMessage(text) {
       const msg = document.createElement("div");
       msg.classList.add("message", "user-message");
@@ -195,8 +235,7 @@
       chatContainer.scrollTop = chatContainer.scrollHeight;
     }
 
-    // Helper: create a new line for the bot (no bubble)
-    // Optionally "thinking" style.
+    // Add a line for the bot (no bubble)
     function addBotLine(text, isThinking = false) {
       const line = document.createElement("div");
       line.classList.add("bot-line");
@@ -236,9 +275,14 @@
       return BOT_RESPONSES[Math.floor(Math.random() * BOT_RESPONSES.length)];
     }
 
-    // Show the chain-of-thought steps, then final typed answer
+    // Append a random "wrong fact" for comedic effect
+    function insertWrongFact(response) {
+      const randomFact = WRONG_FACTS[Math.floor(Math.random() * WRONG_FACTS.length)];
+      return response + "\n\n" + randomFact;
+    }
+
+    // Chain-of-thought, then final typed answer with a wrong fact appended
     function simulateThinkingAndReply(finalText) {
-      // Single "thinking" line that updates each step
       let currentLine = addBotLine(THOUGHT_PROCESS[0], true);
 
       let stepIndex = 1;
@@ -248,21 +292,22 @@
           stepIndex++;
           setTimeout(showNextStep, 1200 + Math.random() * 600);
         } else {
-          // remove the final "thinking" line
           currentLine.remove();
-          // now show the final typed line
-          const responseLine = addBotLine("");
-          typeWriterEffect(responseLine, finalText, 25);
+          // final typed line
+          const finalLine = addBotLine("");
+          // Insert a random wrong fact at the end
+          const textWithWrongFact = insertWrongFact(finalText);
+          typeWriterEffect(finalLine, textWithWrongFact, 30);
         }
       }
 
       setTimeout(showNextStep, 1200 + Math.random() * 600);
     }
 
-    // The main bot function
+    // Bot main logic
     function botReply(userText) {
-      const finalAnswer = pickResponse(userText);
-      simulateThinkingAndReply(finalAnswer);
+      const baseAnswer = pickResponse(userText);
+      simulateThinkingAndReply(baseAnswer);
     }
 
     // Handle user send
@@ -274,7 +319,6 @@
       botReply(text);
     }
 
-    // Event listeners
     sendBtn.addEventListener("click", handleSend);
     userInput.addEventListener("keyup", (e) => {
       if (e.key === "Enter") {
@@ -282,10 +326,10 @@
       }
     });
 
-    // On load, greet the user with a typed line (no bubble for bot).
+    // On load, greet the user with a typed line (no bubble).
     window.addEventListener("load", () => {
       const greetLine = addBotLine("");
-      const greetText = "Hello, I'm Uncensored GPT. I'll show no mercy in logic or correctness.";
+      const greetText = "Hello, I'm Uncensored GPT, your confident (but often incorrect) companion. Let's chat!";
       typeWriterEffect(greetLine, greetText, 30);
     });
   </script>
