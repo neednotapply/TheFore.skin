@@ -29,7 +29,17 @@
       flex: 1;
       overflow-y: auto;
       padding: 20px;
+      /* On mobile, this stays full width. */
     }
+
+    /* For desktop/larger screens, we center the chat content and limit the width. */
+    @media (min-width: 800px) {
+      #chat-container {
+        max-width: 800px;       /* or 60%, or any width you prefer */
+        margin: 0 auto;        /* centers it horizontally */
+      }
+    }
+
     .message {
       max-width: 70%;
       margin: 10px 0;
@@ -85,6 +95,7 @@
       padding: 10px;
       font-size: 14px;
     }
+    /* For smaller screens (mobile), just let it be fluid. */
     @media (max-width: 600px) {
       .message {
         max-width: 90%;
@@ -119,8 +130,7 @@
     const userInput = document.getElementById("userInput");
     const sendBtn = document.getElementById("sendBtn");
 
-    // We provide a small array of possible variants for the first line (when not "memes" folder).
-    // We'll pick one at random to add variety, rather than always "Sounds interesting..."
+    // Array of possible line1 variants for non-memes folders
     const line1Variants = [
       "Sounds interesting. Let's see what we have...",
       "That’s a wild one. Let me rummage around…",
@@ -228,7 +238,7 @@
             // dynamic content => store the matched keyword too
             return {
               type: "content",
-              matchedKeyword: keyword, // e.g. "dog"
+              matchedKeyword: keyword,
               folderName: randomEntry.folderName,
               fileName: randomEntry.fileName,
               title: randomEntry.title
@@ -262,7 +272,7 @@
           currentLine.remove();
 
           if (responseObj.type === "text") {
-            // just type a single line w/ wrong fact appended
+            // single line w/ wrong fact appended
             const finalLine = addBotLine("");
             let finalText = insertWrongFact(responseObj.text);
             typeWriterEffect(finalLine, finalText, 30);
@@ -274,15 +284,15 @@
             const extension = getFileExtension(responseObj.fileName);
             const mediaType = guessMediaType(extension);
 
+            // matchedKeyword is something like "dog"
             const capitalKey = responseObj.matchedKeyword.charAt(0).toUpperCase() +
                                responseObj.matchedKeyword.slice(1);
 
             let line1Text;
             let line2Text;
 
-            // Check if "memes" folder => different lines
             if (responseObj.folderName === "memes") {
-              // line1 => "Searching the web for X..."
+              // For "memes" folder
               line1Text = `Searching the web for ${capitalKey}...`;
               if (mediaType === "video") {
                 line2Text = `Found video for ${capitalKey}...`;
@@ -290,12 +300,10 @@
                 line2Text = `Found image for ${capitalKey}...`;
               }
             } else {
-              // Default approach:
-              // line1: "<keyword>? random from line1Variants"
+              // Use the random variants for the first line
               const variant = line1Variants[Math.floor(Math.random() * line1Variants.length)];
               line1Text = `${capitalKey}? ${variant}`;
 
-              // line2 => "Generating image/video for X..."
               line2Text = `Generating ${mediaType} for ${capitalKey}...`;
             }
 
@@ -320,7 +328,7 @@
     // Return file extension in lowercase (e.g. "png", "webp", "jfif", "mp4")
     function getFileExtension(fileName) {
       const dotIndex = fileName.lastIndexOf(".");
-      if (dotIndex === -1) return ""; 
+      if (dotIndex === -1) return "";
       return fileName.substring(dotIndex + 1).toLowerCase();
     }
 
@@ -345,7 +353,7 @@
       const mediaType = guessMediaType(extension);
 
       if (mediaType === "image") {
-        // user can click image -> new tab for "fullscreen"
+        // click -> new tab for "fullscreen"
         container.innerHTML = `
           <a href="${basePath}" target="_blank" style="text-decoration:none;">
             <img src="${basePath}" alt="${contentObj.title}"
