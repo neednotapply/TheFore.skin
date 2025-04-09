@@ -25,7 +25,7 @@
       position: relative;
       background: #333;
       height: 60px;
-      overflow: hidden; /* ensure we don't see text if it moves out of area */
+      overflow: hidden; /* hide the text if it moves out of area */
     }
 
     #title-bar h1 {
@@ -37,23 +37,20 @@
       font-weight: normal;
       font-size: 24px;
       transition: transform 1.5s ease, left 1.5s ease;
-      /* No animation on load, we'll move it on scroll instead */
     }
 
-    /* When we add "slide" class to #title-bar, h1 slides to the left side */
+    /* When user scrolls and we add .slide, the H1 slides left */
     #title-bar.slide h1 {
       left: 20px;
       transform: translateX(0);
     }
 
-    /* Chat container (scrollable). We'll center it on large screens. */
+    /* Main chat container, scrollable. We'll center it on large screens. */
     #chat-container {
       flex: 1;
       overflow-y: auto;
       padding: 20px;
     }
-
-    /* On desktop/larger screens, center the chat and limit the width. */
     @media (min-width: 800px) {
       #chat-container {
         max-width: 800px;
@@ -69,24 +66,21 @@
       line-height: 1.4;
       white-space: pre-wrap;
     }
-
     .user-message {
       background: #4c4c4c;
       margin-left: auto;
     }
-
     .bot-line {
       margin: 8px 0;
       white-space: pre-wrap;
       line-height: 1.4;
     }
-
     .thinking {
       opacity: 0.75;
       font-style: italic;
     }
 
-    /* Input container. Also center on desktop, same width as chat. */
+    /* Input bar, also centered on large screens. */
     #input-container {
       display: flex;
       background: #333;
@@ -120,23 +114,20 @@
       font-size: 16px;
       color: #fff;
     }
-
     #sendBtn:hover {
       background: #37a55b;
     }
 
-    /* Footer styled to match input bar (same height, background, etc.) */
+    /* Minimal footer with no background, small text */
     footer {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: #333;
+      background: none;
       color: #bbb;
-      height: 60px; /* matches the title bar / input bar */
+      text-align: center;
       font-size: 14px;
+      padding: 5px 0;
+      /* no fixed height, so it's minimal */
     }
 
-    /* For smaller screens, keep fluid width. */
     @media (max-width: 600px) {
       .message {
         max-width: 90%;
@@ -151,7 +142,7 @@
   </style>
 </head>
 <body>
-  <!-- Title bar with text that moves left when user scrolls -->
+  <!-- Title bar with text that only slides on user scroll -->
   <div id="title-bar">
     <h1>Uncensored GPT</h1>
   </div>
@@ -463,7 +454,7 @@
     function handleTitleBarScroll() {
       if (window.scrollY > 50) {
         document.getElementById("title-bar").classList.add("slide");
-        // If we only want it to animate once, remove the event listener:
+        // remove event listener if we only want it once
         window.removeEventListener("scroll", handleTitleBarScroll);
       }
     }
