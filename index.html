@@ -50,7 +50,7 @@
       transition: transform 1.5s ease, left 1.5s ease;
     }
 
-    /* Slide title left on scroll */
+    /* When scrolled, slide H1 left */
     #title-bar.slide h1 {
       left: 20px;
       transform: translateX(0);
@@ -63,6 +63,7 @@
       padding: 20px;
     }
 
+    /* Center chat container on desktop */
     @media (min-width: 800px) {
       #chat-container {
         max-width: 800px;
@@ -78,30 +79,27 @@
       line-height: 1.4;
       white-space: pre-wrap;
     }
-
     .user-message {
       background: #4c4c4c;
       margin-left: auto;
     }
-
     .bot-line {
       margin: 8px 0;
       white-space: pre-wrap;
       line-height: 1.4;
     }
-
-    /* Make "thinking" text a darker gray */
     .thinking {
       opacity: 0.75;
       font-style: italic;
       color: #888;
     }
 
-    /* Input container */
+    /* Input container with rounded corners */
     #input-container {
       display: flex;
       background: #333;
       padding: 10px;
+      border-radius: 8px;  /* Rounded corners added */
     }
     @media (min-width: 800px) {
       #input-container {
@@ -110,18 +108,16 @@
         width: 100%;
       }
     }
-    
-    /* Rounded corners on the input */
+
     #userInput {
       flex: 1;
       padding: 10px;
       border: none;
-      border-radius: 8px; /* Increased from 4px */
+      border-radius: 8px;
       outline: none;
       font-size: 16px;
       color: #333;
     }
-    
     #sendBtn {
       padding: 10px 20px;
       margin-left: 10px;
@@ -132,12 +128,11 @@
       font-size: 16px;
       color: #fff;
     }
-    
     #sendBtn:hover {
       background: #37a55b;
     }
 
-    /* Minimal footer with transparent background and matching font color (#888) */
+    /* Footer with no background */
     footer {
       background: none;
       color: #888;
@@ -187,7 +182,6 @@
     const sendBtn = document.getElementById("sendBtn");
     const titleBar = document.getElementById("title-bar");
 
-    // Random variants for non-"memes" first line
     const line1Variants = [
       "Sounds interesting. Let's see what we have...",
       "That’s a wild one. Let me rummage around…",
@@ -196,19 +190,17 @@
       "Fascinating pick! Generating illusions right away…"
     ];
 
-    // ================== PWA Service Worker Registration ==================
+    // PWA Service Worker Registration
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
         navigator.serviceWorker.register('/sw.js').then(function(registration) {
-          console.log('ServiceWorker registered with scope:', registration.scope);
+          console.log('ServiceWorker registration successful with scope:', registration.scope);
         }, function(err) {
           console.error('ServiceWorker registration failed:', err);
         });
       });
     }
-    // =====================================================================
 
-    // ================== Load Dynamic Content Index ==================
     async function loadContentIndex() {
       try {
         const res = await fetch("/content/content-index.json");
@@ -254,7 +246,6 @@
       }
       return combined;
     }
-    // ===================================================================
 
     function addUserMessage(text) {
       const msg = document.createElement("div");
@@ -321,9 +312,7 @@
       const steps = window.THOUGHT_PROCESS;
       let currentLine = addBotLine(steps[0], true);
       let stepIndex = 1;
-
       function showNextStep() {
-        // Use a shorter, random delay to make thinking seem less steady:
         const delay = 600 + Math.random() * 300;
         if (stepIndex < steps.length) {
           currentLine.textContent = steps[stepIndex];
@@ -385,7 +374,7 @@
       line.classList.add("bot-line");
       const container = document.createElement("div");
       container.style.display = "inline-block";
-      container.style.textAlign = "center"; // Only center the caption if needed
+      container.style.textAlign = "center";
       const basePath = `/content/${contentObj.folderName}/${contentObj.fileName}`;
       const mediaType = guessMediaType(extension);
       if (mediaType === "image") {
