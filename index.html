@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Uncensored GPT (Use Matched Keyword & Center Media)</title>
+  <title>Uncensored GPT (Left-Aligned Media & Centered Text)</title>
   <style>
     * { box-sizing: border-box; font-family: sans-serif; }
     body {
@@ -64,7 +64,7 @@
   </style>
 </head>
 <body>
-  <h1>Uncensored GPT (Matched Keyword & Centered Media)</h1>
+  <h1>Uncensored GPT (Left-Aligned Media & Centered Text)</h1>
 
   <div id="chat-container"></div>
 
@@ -187,7 +187,7 @@
             // dynamic content => store the matched keyword too
             return {
               type: "content",
-              matchedKeyword: keyword,  // <--- so we can use "dog" or "cat" in typed lines
+              matchedKeyword: keyword,  // e.g. "dog"
               folderName: randomEntry.folderName,
               fileName: randomEntry.fileName,
               title: randomEntry.title
@@ -229,16 +229,15 @@
 
           // If it's content, produce two typed lines, then show media
           if (responseObj.type === "content") {
-            // we'll guess media type from folder
+            // guess media type from folder
             const mediaType = (responseObj.folderName === "image_gen") ? "image"
                            : (responseObj.folderName === "video_gen") ? "video"
                            : "item";
 
-            // use the *matched* keyword, not item.title
-            // capitalize first letter for user-facing text, e.g. "Dog"
+            // use the *matched* keyword
             const capitalKey = responseObj.matchedKeyword.charAt(0).toUpperCase() + responseObj.matchedKeyword.slice(1);
 
-            // line1 => "Dog? Sounds interesting. Let's see..."
+            // line1 => "Dog? Sounds interesting..."
             const line1Text = `${capitalKey}? Sounds interesting. Let's see what we have...`;
             // line2 => "Generating image for Dog..."
             const line2Text = `Generating ${mediaType} for ${capitalKey}...`;
@@ -262,41 +261,40 @@
     }
 
     function showMedia(contentObj) {
-      // We'll center the entire block
+      // We'll create a bot-line that remains left-aligned
       const line = document.createElement("div");
       line.classList.add("bot-line");
-      line.style.textAlign = "center";
 
       const basePath = `/content/${contentObj.folderName}/${contentObj.fileName}`;
 
       if (contentObj.folderName === "image_gen") {
-        // Insert an <img> in the center
+        // Left-aligned <img>, but file name text is centered
         line.innerHTML = `
           <br>
-          <img src="${basePath}" alt="${contentObj.title}" style="max-width:300px; border:1px solid #444; display:block; margin:0 auto;">
-          <div style="margin-top:6px; font-size:0.9em;">
+          <img src="${basePath}" alt="${contentObj.title}" style="max-width:300px; border:1px solid #444; display:block; margin:0;">
+          <div style="margin-top:6px; font-size:0.9em; text-align:center;">
             ${contentObj.fileName}
           </div>
         `;
       }
       else if (contentObj.folderName === "video_gen") {
-        // Insert a <video> in the center
+        // Left-aligned <video>, center the file name
         line.innerHTML = `
           <br>
-          <video controls style="max-width:400px; border:1px solid #444; display:block; margin:0 auto;">
+          <video controls style="max-width:400px; border:1px solid #444; display:block; margin:0;">
             <source src="${basePath}" type="video/mp4">
             Your browser does not support the video tag.
           </video>
-          <div style="margin-top:6px; font-size:0.9em;">
+          <div style="margin-top:6px; font-size:0.9em; text-align:center;">
             ${contentObj.fileName}
           </div>
         `;
       }
       else {
-        // fallback if e.g. "memes" or others
+        // fallback if e.g. "memes"
         line.innerHTML = `
           <p>(Here is your '${contentObj.title}' from folder '${contentObj.folderName}')<br>
-          <strong>${contentObj.fileName}</strong></p>
+          <strong style="text-align:center; display:block;">${contentObj.fileName}</strong></p>
         `;
       }
 
