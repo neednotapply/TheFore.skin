@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Uncensored GPT (Left Media + Centered Filename + Click-to-Fullscreen)</title>
+  <title>Uncensored GPT (Extension-Based Media Display)</title>
   <style>
     * {
       box-sizing: border-box;
@@ -209,7 +209,7 @@
     function pickResponse(userText) {
       const lowerText = userText.toLowerCase();
 
-      // 1) We find the *first* recognized keyword that appears in userText
+      // 1) we find the *first* recognized keyword that appears in userText
       for (const [keyword, responseArray] of Object.entries(COMBINED_KEYWORDS)) {
         if (lowerText.includes(keyword)) {
           // pick random entry
@@ -263,11 +263,9 @@
 
           // If it's content, produce two typed lines, then show media
           if (responseObj.type === "content") {
-            const mediaType = (responseObj.folderName === "image_gen") 
-                              ? "image"
-                              : (responseObj.folderName === "video_gen")
-                                ? "video"
-                                : "item";
+            const extension = getFileExtension(responseObj.fileName);
+            // "image", "video", or "unknown" based on extension
+            const mediaType = guessMediaType(extension);
 
             const capitalKey = responseObj.matchedKeyword.charAt(0).toUpperCase() 
                                + responseObj.matchedKeyword.slice(1);
@@ -282,7 +280,7 @@
             typeWriterEffect(line1, line1Text, 30, () => {
               setTimeout(() => {
                 typeWriterEffect(line2, line2Text, 30, () => {
-                  showMedia(responseObj);
+                  showMedia(responseObj, extension);
                 });
               }, 600);
             });
@@ -293,21 +291,38 @@
       setTimeout(showNextStep, 1200 + Math.random() * 600);
     }
 
-    function showMedia(contentObj) {
+    // Return file extension in lowercase, e.g. "png", "webp", "mp4"
+    function getFileExtension(fileName) {
+      const dotIndex = fileName.lastIndexOf(".");
+      if (dotIndex === -1) return ""; // no extension
+      return fileName.substring(dotIndex + 1).toLowerCase();
+    }
+
+    // Guess media type based on extension
+    // We treat .jpg, .jpeg, .png, .gif, .webp, .bmp as images, .mp4 as video, else fallback
+    function guessMediaType(extension) {
+      const imageExts = ["jpg","jpeg","png","gif","webp","bmp"];
+      if (imageExts.includes(extension)) return "image";
+      if (extension === "mp4") return "video";
+      return "unknown";
+    }
+
+    function showMedia(contentObj, extension) {
       // We'll create a bot-line that's left-aligned.
       const line = document.createElement("div");
       line.classList.add("bot-line");
 
-      // Create an inline-block container so the media + filename stay grouped.
-      // The media is left-aligned overall, but the file name is centered within this block.
+      // create an inline-block container with textAlign:center for the filename
       const container = document.createElement("div");
       container.style.display = "inline-block";
       container.style.textAlign = "center";
 
       const basePath = `/content/${contentObj.folderName}/${contentObj.fileName}`;
 
-      if (contentObj.folderName === "image_gen") {
-        // Click to open in new tab for "fullscreen" effect
+      const mediaType = guessMediaType(extension);
+
+      if (mediaType === "image") {
+        // user can click image -> new tab
         container.innerHTML = `
           <a href="${basePath}" target="_blank" style="text-decoration:none;">
             <img src="${basePath}" alt="${contentObj.title}"
@@ -318,7 +333,7 @@
           </div>
         `;
       }
-      else if (contentObj.folderName === "video_gen") {
+      else if (mediaType === "video") {
         container.innerHTML = `
           <video controls style="max-width:400px; border:1px solid #444; display:block; margin:0;">
             <source src="${basePath}" type="video/mp4">
@@ -330,7 +345,7 @@
         `;
       }
       else {
-        // fallback if "memes" or other
+        // fallback for other file types
         container.innerHTML = `
           <div style="margin-bottom: 5px; font-size:0.9em;">
             (Here is your '${contentObj.title}' from folder '${contentObj.folderName}')
