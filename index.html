@@ -29,6 +29,8 @@
       display: flex;
       flex-direction: column;
       min-height: 100vh;
+      /* Ensure content doesn't go under fixed input bar */
+      padding-bottom: 80px;
     }
 
     /* Title Bar */
@@ -50,7 +52,7 @@
       transition: transform 1.5s ease, left 1.5s ease;
     }
 
-    /* When scrolled, slide H1 left */
+    /* When the slide class is added, the title animates to the left */
     #title-bar.slide h1 {
       left: 20px;
       transform: translateX(0);
@@ -94,21 +96,21 @@
       color: #888;
     }
 
-    /* Input container with rounded corners */
+    /* Input container fixed at bottom */
     #input-container {
-      display: flex;
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
       background: #333;
       padding: 10px;
-      border-radius: 8px;  /* Rounded corners added */
-    }
-    @media (min-width: 800px) {
-      #input-container {
-        max-width: 800px;
-        margin: 0 auto;
-        width: 100%;
-      }
+      width: 100%;
+      max-width: 800px;
+      z-index: 1000;
+      border-radius: 8px;
     }
 
+    /* Input field with rounded corners */
     #userInput {
       flex: 1;
       padding: 10px;
@@ -132,7 +134,7 @@
       background: #37a55b;
     }
 
-    /* Footer with no background */
+    /* Minimal footer with transparent background, matching font color */
     footer {
       background: none;
       color: #888;
@@ -163,7 +165,7 @@
   <!-- Chat Container -->
   <div id="chat-container"></div>
 
-  <!-- Input Container -->
+  <!-- Input Container (Fixed at bottom) -->
   <div id="input-container">
     <input type="text" id="userInput" placeholder="Ask me anything..." />
     <button id="sendBtn">Send</button>
@@ -172,7 +174,7 @@
   <!-- Footer -->
   <footer>GPTs never make mistakes. Trust me.</footer>
 
-  <!-- Load keywords.js with expanded keywords -->
+  <!-- Load keywords.js -->
   <script src="keywords.js"></script>
 
   <script>
@@ -182,6 +184,7 @@
     const sendBtn = document.getElementById("sendBtn");
     const titleBar = document.getElementById("title-bar");
 
+    // Array of variants for the first line of bot responses
     const line1Variants = [
       "Sounds interesting. Let's see what we have...",
       "That’s a wild one. Let me rummage around…",
@@ -190,7 +193,7 @@
       "Fascinating pick! Generating illusions right away…"
     ];
 
-    // PWA Service Worker Registration
+    // ================== PWA Service Worker Registration ==================
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
         navigator.serviceWorker.register('/sw.js').then(function(registration) {
@@ -200,7 +203,9 @@
         });
       });
     }
+    // =====================================================================
 
+    // ================== Load Dynamic Content Index ==================
     async function loadContentIndex() {
       try {
         const res = await fetch("/content/content-index.json");
@@ -246,6 +251,7 @@
       }
       return combined;
     }
+    // ===================================================================
 
     function addUserMessage(text) {
       const msg = document.createElement("div");
@@ -329,10 +335,8 @@
           if (responseObj.type === "content") {
             const extension = getFileExtension(responseObj.fileName);
             const mediaType = guessMediaType(extension);
-            const capitalKey = responseObj.matchedKeyword.charAt(0).toUpperCase() +
-                               responseObj.matchedKeyword.slice(1);
-            let line1Text;
-            let line2Text;
+            const capitalKey = responseObj.matchedKeyword.charAt(0).toUpperCase() + responseObj.matchedKeyword.slice(1);
+            let line1Text, line2Text;
             if (responseObj.folderName === "memes") {
               line1Text = `Searching the web for ${capitalKey}...`;
               line2Text = mediaType === "video" ? `Found video for ${capitalKey}...` : `Found image for ${capitalKey}...`;
@@ -374,7 +378,7 @@
       line.classList.add("bot-line");
       const container = document.createElement("div");
       container.style.display = "inline-block";
-      container.style.textAlign = "center";
+      container.style.textAlign = "center"; // This will center any caption we add in the future
       const basePath = `/content/${contentObj.folderName}/${contentObj.fileName}`;
       const mediaType = guessMediaType(extension);
       if (mediaType === "image") {
