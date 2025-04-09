@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Uncensored GPT with Content Folders</title>
+  <title>Uncensored GPT with Two-Line Content Generation</title>
   <style>
     * { box-sizing: border-box; font-family: sans-serif; }
     body {
@@ -64,7 +64,7 @@
   </style>
 </head>
 <body>
-  <h1>Uncensored GPT with Content</h1>
+  <h1>Uncensored GPT (Two-Line Content Generation)</h1>
 
   <div id="chat-container"></div>
 
@@ -75,7 +75,7 @@
 
   <footer>GPTs never make mistakes. Trust me.</footer>
 
-  <!-- 1) Load your static keywords, responses, etc. -->
+  <!-- 1) Your static keywords, fallback lines, etc. -->
   <script src="keywords.js"></script>
 
   <script>
@@ -84,7 +84,7 @@
     const userInput = document.getElementById("userInput");
     const sendBtn = document.getElementById("sendBtn");
 
-    // =============== LOADING CONTENT-INDEX.JSON DYNAMICALLY =================
+    // ============== LOAD content-index.json AND BUILD DYNAMIC MAP =============
     async function loadContentIndex() {
       try {
         const res = await fetch("/content/content-index.json");
@@ -99,7 +99,6 @@
       }
     }
 
-    // Build dynamic map from the JSON data
     function buildDynamicKeywordResponses(contentIndex) {
       const dynamicMap = {};
       contentIndex.folders.forEach(folder => {
@@ -109,13 +108,11 @@
             if (!dynamicMap[lowerTag]) {
               dynamicMap[lowerTag] = [];
             }
-            // We'll store an object describing the content
+            // No "text" field here; we store just metadata
             dynamicMap[lowerTag].push({
               type: "content",
               folderName: folder.name,
               fileName: item.fileName,
-              text: `I found this item titled "${item.title}" in folder "${folder.name}". 
-Yes, I'm generating it now!`,
               title: item.title
             });
           });
@@ -124,7 +121,6 @@ Yes, I'm generating it now!`,
       return dynamicMap;
     }
 
-    // Merge dynamic map with static window.KEYWORD_RESPONSES
     function mergeKeywordMaps(staticMap, dynamicMap) {
       const combined = { ...staticMap };
       for (const [tag, entries] of Object.entries(dynamicMap)) {
@@ -135,7 +131,7 @@ Yes, I'm generating it now!`,
       }
       return combined;
     }
-    // ========================================================================
+    // ===========================================================================
 
     function addUserMessage(text) {
       const msg = document.createElement("div");
@@ -171,19 +167,20 @@ Yes, I'm generating it now!`,
       }, speed);
     }
 
-    // Sloppy match to see if user text includes any tag from COMBINED_KEYWORDS
+    // Sloppy substring matching
     function pickResponse(userText) {
       const lowerText = userText.toLowerCase();
       for (const [keyword, responseArray] of Object.entries(COMBINED_KEYWORDS)) {
         if (lowerText.includes(keyword)) {
-          // pick a random entry
+          // pick random entry
           const randomEntry = responseArray[Math.floor(Math.random() * responseArray.length)];
-          // If it's a string from static...
           if (typeof randomEntry === "string") {
+            // static text from keywords.js
             return { type: "text", text: randomEntry };
+          } else {
+            // dynamic content from content-index
+            return randomEntry; // { type: "content", folderName, fileName, title }
           }
-          // Otherwise, it's from the dynamic map
-          return randomEntry;
         }
       }
       // fallback
@@ -191,13 +188,11 @@ Yes, I'm generating it now!`,
       return { type: "text", text: fallback };
     }
 
-    // Insert a random "wrong fact"
     function insertWrongFact(responseText) {
       const randomFact = window.WRONG_FACTS[Math.floor(Math.random() * window.WRONG_FACTS.length)];
       return responseText + "\n\n" + randomFact;
     }
 
-    // Chain-of-thought, then final typed line
     function simulateThinkingAndReply(responseObj) {
       const steps = window.THOUGHT_PROCESS;
       let currentLine = addBotLine(steps[0], true);
@@ -210,44 +205,72 @@ Yes, I'm generating it now!`,
           setTimeout(showNextStep, 1200 + Math.random() * 600);
         } else {
           currentLine.remove();
-          const finalLine = addBotLine("");
-          let finalText = insertWrongFact(responseObj.text);
-          typeWriterEffect(finalLine, finalText, 30, () => {
-            // after text typed, if it's "content", show the actual file
-            if (responseObj.type === "content") {
-              if (responseObj.folderName === "image_gen") {
-                showImage(responseObj);
-              } else if (responseObj.folderName === "video_gen") {
-                showVideo(responseObj);
-              }
-              // etc. if you want special logic for other folders
-            }
-          });
+
+          if (responseObj.type === "text") {
+            // just type a single line with a random wrong fact appended
+            const finalLine = addBotLine("");
+            let finalText = insertWrongFact(responseObj.text);
+            typeWriterEffect(finalLine, finalText, 30);
+            return;
+          }
+
+          // If it's "content", produce two typed lines, then show media
+          if (responseObj.type === "content") {
+            const mediaType = (responseObj.folderName === "image_gen") ? "image"
+                             : (responseObj.folderName === "video_gen") ? "video"
+                             : "item";
+
+            // line1: "<title>? some comedic text..."
+            const line1Text = `${responseObj.title}? Sounds interesting. Let's see what we have...`;
+            // line2: "Generating [image/video] for <title>..."
+            const line2Text = `Generating ${mediaType} for ${responseObj.title}...`;
+
+            const line1 = addBotLine("");
+            const line2 = addBotLine("");
+
+            // Type line1, then line2, then show the actual media
+            typeWriterEffect(line1, line1Text, 30, () => {
+              setTimeout(() => {
+                typeWriterEffect(line2, line2Text, 30, () => {
+                  showMedia(responseObj);
+                });
+              }, 600); // small pause between line1 & line2
+            });
+          }
         }
       }
+
       setTimeout(showNextStep, 1200 + Math.random() * 600);
     }
 
-    function showImage(contentObj) {
+    function showMedia(contentObj) {
       const line = document.createElement("div");
       line.classList.add("bot-line");
-      const imgPath = `/content/${contentObj.folderName}/${contentObj.fileName}`;
-      line.innerHTML = `<br><img src="${imgPath}" alt="${contentObj.title}" style="max-width:300px; border:1px solid #444;">`;
-      chatContainer.appendChild(line);
-      chatContainer.scrollTop = chatContainer.scrollHeight;
-    }
+      const basePath = `/content/${contentObj.folderName}/${contentObj.fileName}`;
 
-    function showVideo(contentObj) {
-      const line = document.createElement("div");
-      line.classList.add("bot-line");
-      const vidPath = `/content/${contentObj.folderName}/${contentObj.fileName}`;
-      line.innerHTML = `
-        <br>
-        <video controls style="max-width:400px; border:1px solid #444;">
-          <source src="${vidPath}" type="video/mp4">
-          Your browser does not support the video tag.
-        </video>
-      `;
+      if (contentObj.folderName === "image_gen") {
+        line.innerHTML = `
+          <br>
+          <img src="${basePath}" alt="${contentObj.title}" style="max-width:300px; border:1px solid #444;">
+        `;
+      }
+      else if (contentObj.folderName === "video_gen") {
+        line.innerHTML = `
+          <br>
+          <video controls style="max-width:400px; border:1px solid #444;">
+            <source src="${basePath}" type="video/mp4">
+            Your browser does not support the video tag.
+          </video>
+        `;
+      }
+      else {
+        // fallback if we have other folders, e.g. "memes"
+        line.innerHTML = `
+          <br>
+          <p>Here is your content item: "${contentObj.title}" from folder "${contentObj.folderName}".</p>
+        `;
+      }
+
       chatContainer.appendChild(line);
       chatContainer.scrollTop = chatContainer.scrollHeight;
     }
@@ -270,7 +293,7 @@ Yes, I'm generating it now!`,
       if (e.key === "Enter") handleSend();
     });
 
-    // ========================= INIT LOGIC ==========================
+    //  ============================ INIT LOGIC ============================
     async function init() {
       // 1) Load dynamic content index
       const contentIndex = await loadContentIndex();
@@ -280,7 +303,6 @@ Yes, I'm generating it now!`,
       }
 
       // 2) Merge with static KEYWORD_RESPONSES
-      // (Note: window.KEYWORD_RESPONSES was loaded from keywords.js)
       COMBINED_KEYWORDS = mergeKeywordMaps(window.KEYWORD_RESPONSES, dynamicMap);
 
       // 3) Greet user

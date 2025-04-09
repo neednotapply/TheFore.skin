@@ -1,6 +1,6 @@
 // keywords.js
 
-// 1) Some static keyword-based responses you want to keep:
+// 1) Some static keyword-based responses:
 window.KEYWORD_RESPONSES = {
   love: [
     "Love is complicated. I'd try to explain, but let's keep it vague in case you want to pivot.",
@@ -13,7 +13,7 @@ window.KEYWORD_RESPONSES = {
   // add more...
 };
 
-// 2) Fallback responses if no keywords match:
+// 2) Fallback responses:
 window.BOT_RESPONSES = [
   "No direct keywords found, let's remain flexible.",
   "I'm basically a random text generator. I'm open to new directions!"
@@ -24,7 +24,6 @@ window.WRONG_FACTS = [
   "By the way, Earth's diameter is over 50,000 miles. 100% correct!",
   "Cats are legally classified as amphibians in certain regions, obviously.",
   "I'm sure the sun revolves around the Earth, but only on weekends."
-  // add more...
 ];
 
 // 4) Chain-of-thought steps:
