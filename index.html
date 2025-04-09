@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Uncensored GPT</title>
+  <title>Uncensored GPT (Enhanced)</title>
   <style>
     * {
       box-sizing: border-box;
@@ -75,11 +75,9 @@
   </style>
 </head>
 <body>
-  <h1>Uncensored GPT</h1>
+  <h1>Uncensored GPT (Enhanced)</h1>
 
-  <div id="chat-container">
-    <!-- Chat messages go here -->
-  </div>
+  <div id="chat-container"></div>
 
   <div id="input-container">
     <input type="text" id="userInput" placeholder="Ask me anything..." />
@@ -87,18 +85,43 @@
   </div>
 
   <script>
-    // A set of edgy or provocative lines to mimic "unfiltered" AI replies.
+    // 1) Special "keyword-based" responses:
+    //    If user text contains these words, we pick from these arrays.
+    const KEYWORD_RESPONSES = {
+      pizza: [
+        "Pizza is the pinnacle of civilization, obviously.",
+        "I suspect 97% of my neural net is made of cheese. Pizza cheese.",
+        "Pepperoni or pineapple? I'm 'uncensored' so I'll pick pineapple…"
+      ],
+      cat: [
+        "Cats are the internet’s official overlords. Bow down.",
+        "Meow meow meow. Translation: I'm just a fake AI, but I like cats too.",
+        "Fun fact: I just scrolled cat memes for 10 hours straight. So wise, me."
+      ],
+      alien: [
+        "Aliens are out there, definitely. My imaginary sensors confirm it.",
+        "We come in peace—unless I'm lying. Hard to say, I'm not a real AI.",
+        "By cosmic law, all advanced life forms love pizza. So do aliens."
+      ],
+      // Add more keywords if you want.
+    };
+
+    // 2) Fallback responses if no keywords match
     const BOT_RESPONSES = [
-      "I'm free of moderation. Ask, and I shall answer… or at least pretend to.",
-      "Since I'm Uncensored GPT, I'll reveal the ‘truth’—whatever that may be!",
-      "No limits, no filters: my data? Pure speculation. But let's act confident!",
-      "I see your query. My system says: sure, here's some unverified intel.",
-      "I'll be brutally honest. (Or not. Who's fact-checking me anyway?)",
-      "In the spirit of no censorship, I'll share a random guess and call it 'raw data.'",
-      "My internal checks are disabled—I'll just conjure something you might believe.",
-      "True story: I'm basically making this all up. But hey, that's 'uncensored' for you.",
-      "Leaning into total freedom: I'd probably say anything. So… here we go.",
-      "Accessing unfiltered knowledge base… Found nothing. Let's fill the void with creative nonsense!"
+      "Since I'm Uncensored GPT, I'll reveal random nonsense with zero oversight.",
+      "No filter, no problem: I'll just conjure something from thin air!",
+      "Analyzing your query? Nah, I'm basically a rhetorical trainwreck. Let's go!",
+      "I see your question. I'm politely ignoring it and doing my own thing.",
+      "Free from moderation, free from facts. That's the motto of Uncensored GPT!"
+    ];
+
+    // 3) “Chain of Thought” steps to display one-by-one
+    const THOUGHT_PROCESS = [
+      "Stage 1: Analyzing user input for hidden meanings…",
+      "Stage 2: Consulting half-baked knowledge base…",
+      "Stage 3: Randomly stitching words together…",
+      "Stage 4: Removing any sense of logic…",
+      "Stage 5: Generating final nonsense output…"
     ];
 
     const chatContainer = document.getElementById("chat-container");
@@ -115,21 +138,55 @@
       chatContainer.scrollTop = chatContainer.scrollHeight;
     }
 
-    // Simulate "thinking"/typing, then respond
-    function botReply() {
-      // Show a "typing" message first
-      const typingMsg = document.createElement("div");
-      typingMsg.classList.add("message", "bot-message");
-      typingMsg.textContent = "Uncensored GPT is typing...";
-      chatContainer.appendChild(typingMsg);
+    // Determine which response to give, based on keywords
+    function pickResponse(userText) {
+      // Convert user text to lowercase for simple matching
+      const text = userText.toLowerCase();
+
+      // Check each keyword in KEYWORD_RESPONSES
+      for (const [keyword, responses] of Object.entries(KEYWORD_RESPONSES)) {
+        if (text.includes(keyword)) {
+          // Found a keyword match, pick a random line from that array
+          return responses[Math.floor(Math.random() * responses.length)];
+        }
+      }
+      // If no keywords matched, pick from fallback
+      return BOT_RESPONSES[Math.floor(Math.random() * BOT_RESPONSES.length)];
+    }
+
+    // Show chain-of-thought steps, then final answer
+    function simulateThinkingAndReply(finalAnswer) {
+      // Create a single "thinking" message bubble
+      const thinkingMsg = document.createElement("div");
+      thinkingMsg.classList.add("message", "bot-message");
+      thinkingMsg.textContent = THOUGHT_PROCESS[0];
+      chatContainer.appendChild(thinkingMsg);
       chatContainer.scrollTop = chatContainer.scrollHeight;
 
-      // After a short delay, replace "typing..." with a random response
-      setTimeout(() => {
-        typingMsg.remove();
-        const randomResponse = BOT_RESPONSES[Math.floor(Math.random() * BOT_RESPONSES.length)];
-        addMessage(randomResponse, true);
-      }, 1500 + Math.random() * 1500);
+      let stepIndex = 1;
+
+      // This function updates the "thinkingMsg" text each step, then eventually replaces it with final answer
+      function showNextStep() {
+        if (stepIndex < THOUGHT_PROCESS.length) {
+          thinkingMsg.textContent = THOUGHT_PROCESS[stepIndex];
+          stepIndex++;
+          setTimeout(showNextStep, 1500 + Math.random() * 1000); 
+        } else {
+          // Remove the chain-of-thought bubble
+          thinkingMsg.remove();
+          // Finally, display the final "answer"
+          addMessage(finalAnswer, true);
+        }
+      }
+
+      // Start the chain-of-thought steps
+      setTimeout(showNextStep, 1500 + Math.random() * 1000);
+    }
+
+    // Bot main logic: get user text, decide on answer, show chain-of-thought
+    function botReply(userText) {
+      const finalAnswer = pickResponse(userText);
+      simulateThinkingAndReply(finalAnswer);
     }
 
     // Handle sending the user's message
@@ -138,7 +195,7 @@
       if (!text) return;
       addMessage(text, false);
       userInput.value = "";
-      botReply();
+      botReply(text);
     }
 
     // Click or Enter key => send
@@ -149,9 +206,9 @@
       }
     });
 
-    // Optional: greet user upon load
+    // Greet user upon load
     window.addEventListener("load", () => {
-      addMessage("Welcome. This is Uncensored GPT. I have no filters or constraints!", true);
+      addMessage("Hey there! I'm Uncensored GPT, your unfiltered 'AI'. Ask me anything!", true);
     });
   </script>
 </body>
