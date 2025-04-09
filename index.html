@@ -2,14 +2,19 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <!-- Required for PWA responsiveness and scaling -->
+  <!-- Ensure responsive scaling -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Uncensored GPT</title>
+  
+  <title>Uncensored GPT – App Edition</title>
 
-  <!-- Manifest for PWA (create this file, see below) -->
+  <!-- Manifest file for PWA -->
   <link rel="manifest" href="/manifest.json" />
-  <!-- Set the theme color for the address bar, etc. -->
   <meta name="theme-color" content="#333333" />
+
+  <!-- Favicons -->
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png" />
+  <link rel="icon" type="image/png" sizes="96x96" href="/images/favicon-96x96.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png" />
 
   <style>
     * {
@@ -27,7 +32,7 @@
       min-height: 100vh;
     }
 
-    /* Title bar with header text that will slide left on scroll */
+    /* Title Bar */
     #title-bar {
       position: relative;
       background: #333;
@@ -46,20 +51,20 @@
       transition: transform 1.5s ease, left 1.5s ease;
     }
 
-    /* When the slide class is added, the title animates to left */
+    /* When scrolled, slide H1 to the left */
     #title-bar.slide h1 {
       left: 20px;
       transform: translateX(0);
     }
 
-    /* Chat container – scrollable area */
+    /* Chat container */
     #chat-container {
       flex: 1;
       overflow-y: auto;
       padding: 20px;
     }
 
-    /* Desktop centering for chat container */
+    /* Center chat container on desktop */
     @media (min-width: 800px) {
       #chat-container {
         max-width: 800px;
@@ -89,7 +94,7 @@
       font-style: italic;
     }
 
-    /* Input container styling and centering on desktop */
+    /* Input container */
     #input-container {
       display: flex;
       background: #333;
@@ -102,7 +107,6 @@
         width: 100%;
       }
     }
-
     #userInput {
       flex: 1;
       padding: 10px;
@@ -126,7 +130,7 @@
       background: #37a55b;
     }
 
-    /* Footer styled to be minimal and transparent */
+    /* Footer with minimal styling and no background */
     footer {
       background: none;
       color: #bbb;
@@ -149,7 +153,7 @@
   </style>
 </head>
 <body>
-  <!-- Title Bar -->
+  <!-- Title Bar with animating title -->
   <div id="title-bar">
     <h1>Uncensored GPT</h1>
   </div>
@@ -166,18 +170,17 @@
   <!-- Footer -->
   <footer>GPTs never make mistakes. Trust me.</footer>
 
-  <!-- Load Expanded Keywords from keywords.js (ensure this file exists) -->
+  <!-- Load keywords.js with expanded keywords (pop-culture references, etc.) -->
   <script src="keywords.js"></script>
 
   <script>
-    // Global variable for combined keywords
     let COMBINED_KEYWORDS = null;
     const chatContainer = document.getElementById("chat-container");
     const userInput = document.getElementById("userInput");
     const sendBtn = document.getElementById("sendBtn");
     const titleBar = document.getElementById("title-bar");
 
-    // Array with multiple first-line variants for non-"memes" content
+    // Random variants for first line (non-memes)
     const line1Variants = [
       "Sounds interesting. Let's see what we have...",
       "That’s a wild one. Let me rummage around…",
@@ -190,9 +193,9 @@
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
         navigator.serviceWorker.register('/sw.js').then(function(registration) {
-          console.log('ServiceWorker registration successful with scope: ', registration.scope);
+          console.log('ServiceWorker registered with scope:', registration.scope);
         }, function(err) {
-          console.log('ServiceWorker registration failed: ', err);
+          console.error('ServiceWorker registration failed:', err);
         });
       });
     }
@@ -222,6 +225,7 @@
             if (!dynamicMap[lowerTag]) {
               dynamicMap[lowerTag] = [];
             }
+            // Store metadata (no additional text; we'll build that on the fly)
             dynamicMap[lowerTag].push({
               type: "content",
               folderName: folder.name,
@@ -282,6 +286,7 @@
 
     function pickResponse(userText) {
       const lowerText = userText.toLowerCase();
+      // Loop through the combined keywords and return the first match
       for (const [keyword, responseArray] of Object.entries(COMBINED_KEYWORDS)) {
         if (lowerText.includes(keyword)) {
           const randomEntry = responseArray[Math.floor(Math.random() * responseArray.length)];
@@ -333,11 +338,7 @@
             let line2Text;
             if (responseObj.folderName === "memes") {
               line1Text = `Searching the web for ${capitalKey}...`;
-              if (mediaType === "video") {
-                line2Text = `Found video for ${capitalKey}...`;
-              } else {
-                line2Text = `Found image for ${capitalKey}...`;
-              }
+              line2Text = mediaType === "video" ? `Found video for ${capitalKey}...` : `Found image for ${capitalKey}...`;
             } else {
               const variant = line1Variants[Math.floor(Math.random() * line1Variants.length)];
               line1Text = `${capitalKey}? ${variant}`;
@@ -376,8 +377,7 @@
       line.classList.add("bot-line");
       const container = document.createElement("div");
       container.style.display = "inline-block";
-      // We'll keep the container left-aligned but center ONLY the caption (if any)
-      container.style.textAlign = "center";
+      container.style.textAlign = "center"; // centers caption only
       const basePath = `/content/${contentObj.folderName}/${contentObj.fileName}`;
       const mediaType = guessMediaType(extension);
       if (mediaType === "image") {
@@ -446,15 +446,15 @@
 
     window.addEventListener("load", init);
   </script>
-  
-  <!-- Service Worker registration for PWA capabilities -->
+
+  <!-- PWA Service Worker Registration -->
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
         navigator.serviceWorker.register('/sw.js').then(function(registration) {
-          console.log('ServiceWorker registration successful with scope: ', registration.scope);
+          console.log('ServiceWorker registration successful with scope:', registration.scope);
         }, function(err) {
-          console.log('ServiceWorker registration failed: ', err);
+          console.error('ServiceWorker registration failed:', err);
         });
       });
     }
