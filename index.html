@@ -291,21 +291,21 @@
       setTimeout(showNextStep, 1200 + Math.random() * 600);
     }
 
-    // Return file extension in lowercase, e.g. "png", "webp", "mp4"
-    function getFileExtension(fileName) {
-      const dotIndex = fileName.lastIndexOf(".");
-      if (dotIndex === -1) return ""; // no extension
-      return fileName.substring(dotIndex + 1).toLowerCase();
-    }
+// Return file extension in lowercase, e.g. "png", "webp", "mp4", "jfif"
+function getFileExtension(fileName) {
+  const dotIndex = fileName.lastIndexOf(".");
+  if (dotIndex === -1) return ""; // no extension
+  return fileName.substring(dotIndex + 1).toLowerCase();
+}
 
-    // Guess media type based on extension
-    // We treat .jpg, .jpeg, .png, .gif, .webp, .bmp as images, .mp4 as video, else fallback
-    function guessMediaType(extension) {
-      const imageExts = ["jpg","jpeg","png","gif","webp","bmp"];
-      if (imageExts.includes(extension)) return "image";
-      if (extension === "mp4") return "video";
-      return "unknown";
-    }
+// Guess media type based on extension
+// Now includes 'jfif' among the recognized image extensions
+function guessMediaType(extension) {
+  const imageExts = ["jpg", "jpeg", "png", "gif", "webp", "bmp", "jfif"];
+  if (imageExts.includes(extension)) return "image";
+  if (extension === "mp4") return "video";
+  return "unknown";
+}
 
     function showMedia(contentObj, extension) {
       // We'll create a bot-line that's left-aligned.
