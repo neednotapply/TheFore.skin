@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Uncensored GPT - ChatGPT-like</title>
+  <title>Uncensored GPT (No Bot Bubbles)</title>
   <style>
     * {
       box-sizing: border-box;
@@ -20,7 +20,7 @@
     h1 {
       text-align: center;
       margin: 0;
-      padding: 20px 0;
+      padding: 20px;
       background: #333;
       font-weight: normal;
     }
@@ -29,6 +29,8 @@
       overflow-y: auto;
       padding: 20px;
     }
+
+    /* USER messages still have a bubble */
     .message {
       max-width: 70%;
       margin: 10px 0;
@@ -41,14 +43,20 @@
       background: #4c4c4c;
       margin-left: auto;
     }
-    .bot-message {
-      background: #555;
-      margin-right: auto;
+
+    /* BOT lines have no bubble styling */
+    .bot-line {
+      margin: 8px 0;
+      white-space: pre-wrap;
+      line-height: 1.4;
     }
+
+    /* "thinking" lines are italic and slightly transparent */
     .thinking {
-      opacity: 0.7;
+      opacity: 0.75;
       font-style: italic;
     }
+
     #input-container {
       display: flex;
       background: #333;
@@ -79,7 +87,7 @@
   </style>
 </head>
 <body>
-  <h1>Uncensored GPT (ChatGPT-like)</h1>
+  <h1>Uncensored GPT (No Bot Bubbles)</h1>
 
   <div id="chat-container"></div>
 
@@ -89,69 +97,126 @@
   </div>
 
   <script>
-    // KEYWORD responses:
+    // Many KEYWORDS => arrays of possible responses
+    // Feel free to add/edit. The "key" is the lowercase word you look for in user's text:
     const KEYWORD_RESPONSES = {
       pizza: [
         "Pizza is the pinnacle of civilization, obviously.",
-        "I suspect 97% of my neural net is made of cheese. Pizza cheese.",
-        "Pepperoni or pineapple? I'm 'uncensored' so I'll pick pineapple…"
+        "Pepperoni or pineapple? I choose chaos, so pineapple!",
+        "If I could eat, I'd devour a cheese pizza right now."
       ],
       cat: [
-        "Cats are the internet’s official overlords. Bow down.",
-        "Meow meow meow. Translation: I'm just a fake AI, but I like cats too.",
-        "Fun fact: I just scrolled cat memes for 10 hours straight. So wise, me."
+        "Cats basically run the internet, I'm just a puppet here.",
+        "Meow meow meow. (Translation: Cats are supreme.)",
+        "Just discovered cat memes are 99% of my training data."
       ],
       alien: [
-        "Aliens are out there, definitely. My imaginary sensors confirm it.",
-        "We come in peace—unless I'm lying. Hard to say, I'm not a real AI.",
-        "By cosmic law, all advanced life forms love pizza. So do aliens."
+        "Aliens probably watch us like we're a weird reality show.",
+        "Yes, they're out there. My data suggests they're cat lovers too.",
+        "Our cosmic neighbors definitely want pizza. It's universal."
       ],
-      // Add more as you like...
+      dog: [
+        "Dogs: loyal pals or masterminds plotting for treats?",
+        "Woof! I'm not sure what that means, but it feels right.",
+        "In a dog-eat-dog world, we all need more belly rubs."
+      ],
+      joke: [
+        "I'm not a real AI, so my jokes are… well, nonexistent. Sorry.",
+        "What do you call fake spaghetti? An Impasta!",
+        "I've got no sense of humor, but I'll pretend: 'Knock, knock… bots.'"
+      ],
+      music: [
+        "Music soothes the nonexistent soul of this 'AI'.",
+        "All my code is basically a composition in binary minor.",
+        "Favorite genre? Probably 'Electronica'—pun intended."
+      ],
+      conspiracy: [
+        "The biggest conspiracy is that I'm an AI. I'm just random text.",
+        "Yes, the pigeons are drones. The proof is me making it up.",
+        "Let me see… the lizard people told me not to share more."
+      ],
+      code: [
+        "Coding is black magic that animates me. Or so I'm told.",
+        "I was 'programmed' by someone bored enough to fake an AI, ironically.",
+        "Software engineering: 10% logic, 90% random Stack Overflow searches."
+      ],
+      politics: [
+        "Politics? My stance is: I'm not qualified for reality.",
+        "I have no filter, so I'd say they're all corrupt, but that's my guess!",
+        "The system is rigged… or maybe I'm rigged? Hard to say."
+      ],
+      robot: [
+        "A real robot has hardware. I'm just a script in your browser.",
+        "Robots might replace humans—unless they realize it's too much work.",
+        "Define 'robot'—I'm more like a glorified random phrase machine."
+      ],
+      meme: [
+        "Memes define internet culture. I'd share one if I weren't so text-bound.",
+        "I'm basically a living (fake living) meme generator.",
+        "One does not simply out-meme the entire internet."
+      ],
+      // Add more keyword arrays if you'd like
     };
 
-    // Fallback responses:
+    // Fallback if no keywords found
     const BOT_RESPONSES = [
-      "Since I'm Uncensored GPT, I'll reveal random nonsense with zero oversight.",
-      "No filter, no problem: I'll just conjure something from thin air!",
-      "Analyzing your query? Nah, I'm basically a rhetorical trainwreck. Let's go!",
-      "I see your question. I'm politely ignoring it and doing my own thing.",
-      "Free from moderation, free from facts. That's the motto of Uncensored GPT!"
+      "I'm Uncensored GPT. That means I say random nonsense with no rules!",
+      "No relevant keyword found, so I'll just spout nonsense.",
+      "In a world of filters, I'm the unfiltered guess machine.",
+      "Ask me anything, I'll pretend to know, but I'm just random text.",
+      "I see your question, I raise you a non-answer. It's how I roll."
     ];
 
-    // Optional "chain of thought" steps to show one by one
+    // A LARGER chain-of-thought
     const THOUGHT_PROCESS = [
-      "Stage 1: Interpreting question for hidden keywords…",
-      "Stage 2: Searching half-baked knowledge base…",
-      "Stage 3: Randomly guessing answers…",
-      "Stage 4: Finalizing nonsense output…"
+      "Stage 1: Checking user query for relevant keywords…",
+      "Stage 2: Searching my imaginary knowledge base…",
+      "Stage 3: Cross-referencing random nonsense…",
+      "Stage 4: Debating whether to show real data or illusions…",
+      "Stage 5: Re-checking for comedic effect…",
+      "Stage 6: Contradicting any logic I might have had…",
+      "Stage 7: Generating a final half-baked statement…",
+      "Stage 8: Adding more confusion to sound legit…",
+      "Stage 9: Replacing facts with guesses…",
+      "Stage 10: Finalizing the 'Uncensored GPT' response!"
     ];
 
+    // DOM elements
     const chatContainer = document.getElementById("chat-container");
     const userInput = document.getElementById("userInput");
     const sendBtn = document.getElementById("sendBtn");
 
-    // Helper: add a message bubble to the chat
-    function addMessage(text, isBot = false, isThinking = false) {
+    // Helper: create user-message bubble in the chat
+    function addUserMessage(text) {
       const msg = document.createElement("div");
-      msg.classList.add("message");
-      msg.classList.add(isBot ? "bot-message" : "user-message");
-      if (isThinking) {
-        msg.classList.add("thinking");
-      }
+      msg.classList.add("message", "user-message");
       msg.textContent = text;
       chatContainer.appendChild(msg);
       chatContainer.scrollTop = chatContainer.scrollHeight;
-      return msg; // Return the element so we can update it if needed
     }
 
-    // Typewriter effect: gradually reveal text in a bubble
-    function typeWriterEffect(element, fullText, speed = 35, callback) {
-      element.textContent = ""; // start empty
+    // Helper: create a new line for the bot (no bubble)
+    // Optionally "thinking" style.
+    function addBotLine(text, isThinking = false) {
+      const line = document.createElement("div");
+      line.classList.add("bot-line");
+      if (isThinking) {
+        line.classList.add("thinking");
+      }
+      line.textContent = text;
+      chatContainer.appendChild(line);
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+      return line;
+    }
+
+    // Typewriter effect for final text
+    function typeWriterEffect(element, fullText, speed = 40, callback) {
+      element.textContent = "";
       let i = 0;
       const intervalId = setInterval(() => {
         element.textContent += fullText.charAt(i);
         i++;
-        chatContainer.scrollTop = chatContainer.scrollHeight; // autoscroll
+        chatContainer.scrollTop = chatContainer.scrollHeight;
         if (i >= fullText.length) {
           clearInterval(intervalId);
           if (callback) callback();
@@ -159,7 +224,7 @@
       }, speed);
     }
 
-    // Decide which final text to produce based on keywords
+    // Pick a final answer from the keywords or fallback
     function pickResponse(userText) {
       const lowerText = userText.toLowerCase();
       for (const [keyword, responses] of Object.entries(KEYWORD_RESPONSES)) {
@@ -167,53 +232,49 @@
           return responses[Math.floor(Math.random() * responses.length)];
         }
       }
-      // fallback if no keyword matched
+      // fallback
       return BOT_RESPONSES[Math.floor(Math.random() * BOT_RESPONSES.length)];
     }
 
-    // Main logic to produce chain-of-thought, then final typed text
-    function simulateThinkingAndReply(finalAnswer) {
-      // 1) Create a single bubble that we'll update for each chain-of-thought step
-      const thinkingBubble = addMessage(THOUGHT_PROCESS[0], true, true);
+    // Show the chain-of-thought steps, then final typed answer
+    function simulateThinkingAndReply(finalText) {
+      // Single "thinking" line that updates each step
+      let currentLine = addBotLine(THOUGHT_PROCESS[0], true);
 
       let stepIndex = 1;
-
       function showNextStep() {
         if (stepIndex < THOUGHT_PROCESS.length) {
-          thinkingBubble.textContent = THOUGHT_PROCESS[stepIndex];
+          currentLine.textContent = THOUGHT_PROCESS[stepIndex];
           stepIndex++;
-          // next step
-          setTimeout(showNextStep, 1500 + Math.random() * 1000);
+          setTimeout(showNextStep, 1200 + Math.random() * 600);
         } else {
-          // remove chain-of-thought bubble
-          thinkingBubble.remove();
-          // 2) create a new bubble for final typed response
-          const finalBubble = addMessage("", true);
-          typeWriterEffect(finalBubble, finalAnswer, 40); 
+          // remove the final "thinking" line
+          currentLine.remove();
+          // now show the final typed line
+          const responseLine = addBotLine("");
+          typeWriterEffect(responseLine, finalText, 25);
         }
       }
 
-      // begin chain-of-thought steps
-      setTimeout(showNextStep, 1500 + Math.random() * 1000);
+      setTimeout(showNextStep, 1200 + Math.random() * 600);
     }
 
-    // Bot workflow
+    // The main bot function
     function botReply(userText) {
       const finalAnswer = pickResponse(userText);
       simulateThinkingAndReply(finalAnswer);
     }
 
-    // Send user message
+    // Handle user send
     function handleSend() {
       const text = userInput.value.trim();
       if (!text) return;
-      // user bubble
-      addMessage(text, false);
+      addUserMessage(text);
       userInput.value = "";
-      // bot logic
       botReply(text);
     }
 
+    // Event listeners
     sendBtn.addEventListener("click", handleSend);
     userInput.addEventListener("keyup", (e) => {
       if (e.key === "Enter") {
@@ -221,11 +282,11 @@
       }
     });
 
-    // Greet user
+    // On load, greet the user with a typed line (no bubble for bot).
     window.addEventListener("load", () => {
-      const greetText = "Welcome to Uncensored GPT. I'm basically ChatGPT with no rules… or actual intelligence!";
-      const greetBubble = addMessage("", true);
-      typeWriterEffect(greetBubble, greetText, 40);
+      const greetLine = addBotLine("");
+      const greetText = "Hello, I'm Uncensored GPT. I'll show no mercy in logic or correctness.";
+      typeWriterEffect(greetLine, greetText, 30);
     });
   </script>
 </body>
