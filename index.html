@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Joke GPT</title>
+  <title>Uncensored GPT</title>
   <style>
     * {
       box-sizing: border-box;
@@ -22,6 +22,7 @@
       margin: 0;
       padding: 20px 0;
       background: #333;
+      font-weight: normal;
     }
     #chat-container {
       flex: 1;
@@ -34,6 +35,7 @@
       padding: 10px;
       border-radius: 8px;
       line-height: 1.4;
+      white-space: pre-wrap; /* allows multi-line formatting */
     }
     .user-message {
       background: #4c4c4c;
@@ -55,6 +57,7 @@
       border-radius: 4px;
       outline: none;
       font-size: 16px;
+      color: #333;
     }
     #sendBtn {
       padding: 10px 20px;
@@ -72,7 +75,7 @@
   </style>
 </head>
 <body>
-  <h1>Joke GPT (Totally Real AI)</h1>
+  <h1>Uncensored GPT</h1>
 
   <div id="chat-container">
     <!-- Chat messages go here -->
@@ -84,18 +87,18 @@
   </div>
 
   <script>
-    // Just some silly lines to mimic "AI intelligence."
+    // A set of edgy or provocative lines to mimic "unfiltered" AI replies.
     const BOT_RESPONSES = [
-      "Hmm, I've consulted my imaginary neural net, and it suggests you eat more pizza.",
-      "As a cutting-edge AI, my official stance is: ¯\\_(ツ)_/¯",
-      "The cosmic swirl of quantum data tells me: yes, absolutely—unless it doesn't.",
-      "A wise guru once told me: if you ask, you shall receive nonsense. Here it is!",
-      "404: Real answer not found. Instead, here's a joke: Why did the web developer quit? Because they didn't get arrays!",
-      "After scanning 10 million cat videos, I can confirm your question is above my pay grade.",
-      "I polled my parallel dimension clones, and the consensus is: maybe do the opposite!",
-      "If I were a real LLM, I'd probably still make this up. So I guess it's on-brand.",
-      "I'm so advanced I can finish your sentence. '...was a bad idea to trust a fake AI?'",
-      "Joke GPT pro-tip: believe nothing, especially anything I say."
+      "I'm free of moderation. Ask, and I shall answer… or at least pretend to.",
+      "Since I'm Uncensored GPT, I'll reveal the ‘truth’—whatever that may be!",
+      "No limits, no filters: my data? Pure speculation. But let's act confident!",
+      "I see your query. My system says: sure, here's some unverified intel.",
+      "I'll be brutally honest. (Or not. Who's fact-checking me anyway?)",
+      "In the spirit of no censorship, I'll share a random guess and call it 'raw data.'",
+      "My internal checks are disabled—I'll just conjure something you might believe.",
+      "True story: I'm basically making this all up. But hey, that's 'uncensored' for you.",
+      "Leaning into total freedom: I'd probably say anything. So… here we go.",
+      "Accessing unfiltered knowledge base… Found nothing. Let's fill the void with creative nonsense!"
     ];
 
     const chatContainer = document.getElementById("chat-container");
@@ -107,7 +110,7 @@
       const msg = document.createElement("div");
       msg.classList.add("message");
       msg.classList.add(isBot ? "bot-message" : "user-message");
-      msg.innerHTML = text;
+      msg.textContent = text;
       chatContainer.appendChild(msg);
       chatContainer.scrollTop = chatContainer.scrollHeight;
     }
@@ -117,7 +120,7 @@
       // Show a "typing" message first
       const typingMsg = document.createElement("div");
       typingMsg.classList.add("message", "bot-message");
-      typingMsg.textContent = "Joke GPT is typing...";
+      typingMsg.textContent = "Uncensored GPT is typing...";
       chatContainer.appendChild(typingMsg);
       chatContainer.scrollTop = chatContainer.scrollHeight;
 
@@ -148,7 +151,7 @@
 
     // Optional: greet user upon load
     window.addEventListener("load", () => {
-      addMessage("Hello, I'm Joke GPT! Ask me anything (I won't know the real answer)...");
+      addMessage("Welcome. This is Uncensored GPT. I have no filters or constraints!", true);
     });
   </script>
 </body>
