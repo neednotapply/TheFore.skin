@@ -29,8 +29,7 @@
       display: flex;
       flex-direction: column;
       min-height: 100vh;
-      /* Add bottom padding so last messages are not hidden behind fixed input */
-      padding-bottom: 80px;
+      padding-bottom: 80px; /* Extra space for fixed input container */
     }
 
     /* Title Bar */
@@ -52,7 +51,7 @@
       transition: transform 1.5s ease, left 1.5s ease;
     }
 
-    /* Slide title left when scrolled */
+    /* When the slide class is added, the title moves to the left */
     #title-bar.slide h1 {
       left: 20px;
       transform: translateX(0);
@@ -65,7 +64,7 @@
       padding: 20px;
     }
 
-    /* Desktop: center chat container and limit width */
+    /* Center chat container on desktop */
     @media (min-width: 800px) {
       #chat-container {
         max-width: 800px;
@@ -74,34 +73,34 @@
     }
 
     .message {
-      max-width: 70%;
-      margin: 10px 0;
-      padding: 10px;
       border-radius: 8px;
       line-height: 1.4;
       white-space: pre-wrap;
+      padding: 10px;
+      /* Remove fixed max-width here; the container will shrink/grow with the content */
+      display: inline-block;
+      max-width: 70%;
     }
-
-    /* User messages are now right-justified */
+    /* The container for user messages will align the bubble to the right */
+    .user-message-container {
+      text-align: right;
+      width: 100%;
+    }
     .user-message {
       background: #4c4c4c;
-      margin-left: auto;
-      text-align: right;
     }
-
     .bot-line {
       margin: 8px 0;
       white-space: pre-wrap;
       line-height: 1.4;
     }
-
     .thinking {
       opacity: 0.75;
       font-style: italic;
       color: #888;
     }
 
-    /* Input container fixed at bottom */
+    /* Fixed input container at bottom */
     #input-container {
       position: fixed;
       bottom: 0;
@@ -111,7 +110,6 @@
       padding: 10px;
       z-index: 1000;
     }
-
     /* Inner container to center input content on desktop */
     .input-inner {
       width: 100%;
@@ -120,17 +118,15 @@
       display: flex;
     }
 
-    /* Input field: make it fill the container */
     #userInput {
       flex: 1;
       padding: 10px;
       border: none;
-      border-radius: 8px; /* Rounded input */
+      border-radius: 8px;
       outline: none;
       font-size: 16px;
       color: #333;
     }
-
     #sendBtn {
       padding: 10px 20px;
       margin-left: 10px;
@@ -141,12 +137,11 @@
       font-size: 16px;
       color: #fff;
     }
-
     #sendBtn:hover {
       background: #37a55b;
     }
 
-    /* Minimal footer with transparent background; same dark gray as thinking text */
+    /* Footer with no background, matching thinking text color */
     footer {
       background: none;
       color: #888;
@@ -155,15 +150,14 @@
       padding: 5px 0;
     }
 
-    /* Responsive tweaks for mobile */
     @media (max-width: 600px) {
-      .message {
-        max-width: 90%;
-      }
       #chat-container {
         padding: 10px;
       }
-      #input-container {
+      .message {
+        max-width: 90%;
+      }
+      #input-container, .input-inner {
         padding: 10px;
       }
     }
@@ -207,7 +201,7 @@
       "Fascinating pick! Generating illusions right away…"
     ];
 
-    // ================== PWA Service Worker Registration ==================
+    // PWA Service Worker Registration
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
         navigator.serviceWorker.register('/sw.js').then(function(registration) {
@@ -217,9 +211,7 @@
         });
       });
     }
-    // =====================================================================
 
-    // ================== Load Dynamic Content Index ==================
     async function loadContentIndex() {
       try {
         const res = await fetch("/content/content-index.json");
@@ -265,13 +257,18 @@
       }
       return combined;
     }
-    // ===================================================================
 
+    // Updated addUserMessage function: wraps the message in a container with text-align:right.
     function addUserMessage(text) {
+      const container = document.createElement("div");
+      container.classList.add("user-message-container");
+      container.style.textAlign = "right"; 
+      container.style.width = "100%";
       const msg = document.createElement("div");
       msg.classList.add("message", "user-message");
       msg.textContent = text;
-      chatContainer.appendChild(msg);
+      container.appendChild(msg);
+      chatContainer.appendChild(container);
       chatContainer.scrollTop = chatContainer.scrollHeight;
     }
 
@@ -349,7 +346,8 @@
           if (responseObj.type === "content") {
             const extension = getFileExtension(responseObj.fileName);
             const mediaType = guessMediaType(extension);
-            const capitalKey = responseObj.matchedKeyword.charAt(0).toUpperCase() + responseObj.matchedKeyword.slice(1);
+            const capitalKey = responseObj.matchedKeyword.charAt(0).toUpperCase() +
+                               responseObj.matchedKeyword.slice(1);
             let line1Text;
             let line2Text;
             if (responseObj.folderName === "memes") {
@@ -393,13 +391,13 @@
       line.classList.add("bot-line");
       const container = document.createElement("div");
       container.style.display = "inline-block";
-      container.style.textAlign = "center"; // caption (if any) will be centered
+      container.style.textAlign = "center"; // centers any caption if later added
       const basePath = `/content/${contentObj.folderName}/${contentObj.fileName}`;
       const mediaType = guessMediaType(extension);
       if (mediaType === "image") {
         container.innerHTML = `
           <a href="${basePath}" target="_blank" style="text-decoration:none;">
-            <img src="${basePath}" alt="${contentObj.title}"
+            <img src="${basePath}" alt="${contentObj.title}" 
                  style="max-width:300px; border:1px solid #444; display:block; margin:0;">
           </a>
         `;
