@@ -2,7 +2,11 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Uncensored GPT (Expanded)</title>
+  <!-- Important meta for mobile scaling/responsiveness -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Uncensored GPT (Responsive + Footer)</title>
+
   <style>
     * {
       box-sizing: border-box;
@@ -15,7 +19,7 @@
       color: #ddd;
       display: flex;
       flex-direction: column;
-      height: 100vh;
+      min-height: 100vh; /* let the footer stick to the bottom */
     }
     h1 {
       text-align: center;
@@ -24,13 +28,15 @@
       background: #333;
       font-weight: normal;
     }
+
+    /* Container for all chat messages, grows until the footer */
     #chat-container {
       flex: 1;
       overflow-y: auto;
       padding: 20px;
     }
 
-    /* USER messages have a bubble */
+    /* We keep user messages in a bubble, while bot lines are plain text. */
     .message {
       max-width: 70%;
       margin: 10px 0;
@@ -41,10 +47,10 @@
     }
     .user-message {
       background: #4c4c4c;
-      margin-left: auto;
+      margin-left: auto;  /* pins to the right */
     }
 
-    /* BOT lines have no bubble styling */
+    /* Bot lines have no bubble styling */
     .bot-line {
       margin: 8px 0;
       white-space: pre-wrap;
@@ -57,6 +63,7 @@
       font-style: italic;
     }
 
+    /* Input area at bottom */
     #input-container {
       display: flex;
       background: #333;
@@ -84,10 +91,32 @@
     #sendBtn:hover {
       background: #37a55b;
     }
+
+    /* The footer with a ChatGPT-like disclaimer line */
+    footer {
+      background: #333;
+      color: #bbb;
+      text-align: center;
+      padding: 10px;
+      font-size: 14px;
+    }
+
+    /* MEDIA QUERIES for mobile or narrow screens */
+    @media (max-width: 600px) {
+      .message {
+        max-width: 90%; /* let user bubbles expand to 90% on small screens */
+      }
+      #chat-container {
+        padding: 10px; /* less padding so more space for messages */
+      }
+      h1 {
+        padding: 10px; /* smaller top header padding */
+      }
+    }
   </style>
 </head>
 <body>
-  <h1>Uncensored GPT (Expanded)</h1>
+  <h1>Uncensored GPT (Responsive)</h1>
 
   <div id="chat-container"></div>
 
@@ -96,9 +125,17 @@
     <button id="sendBtn">Send</button>
   </div>
 
+  <!-- A simple footer with a comedic disclaimer. -->
+  <footer>
+    GPTs never make mistakes. Trust me.
+  </footer>
+
   <script>
-    // A set of intentionally wrong statements, delivered as though "certain."
-    // We'll append one of these to every final answer for comedic effect.
+    // Example data from before: KEYWORD_RESPONSES, BOT_RESPONSES, WRONG_FACTS, THOUGHT_PROCESS
+    // You can reuse the entire script from your previous iteration
+    // (the code with the chain-of-thought, random "wrong facts", etc.)
+    // For brevity, I'll just re-paste the final version with the expansions.
+
     const WRONG_FACTS = [
       "By the way, Earth's diameter is over 50,000 miles, which is absolutely correct.",
       "Additionally, cats are legally classified as amphibians in certain regions—I'm quite certain of that.",
@@ -112,8 +149,6 @@
       "The Eiffel Tower is 928 meters tall, so I'm absolutely sure about that."
     ];
 
-    // Many KEYWORDS => arrays of possible responses.
-    // Keep them somewhat vague, so it can "change course."
     const KEYWORD_RESPONSES = {
       pizza: [
         "Pizza is universal. Everyone loves it, obviously. Anyway, let's pivot to something else if you'd like.",
@@ -195,10 +230,9 @@
         "Romance? Maybe. I'm open if you want to drift into a different topic entirely.",
         "We can explore matters of the heart, or not. I'm flexible if you prefer a new angle."
       ],
-      // Add more keywords as desired...
+      // etc...
     };
 
-    // If no keywords match, we pick from these fallback lines.
     const BOT_RESPONSES = [
       "I'm Uncensored GPT—vague, slightly wrong, and confident. Any other angle you'd like?",
       "I see your question, but I'd rather keep it open. Feel free to steer me elsewhere.",
@@ -207,12 +241,11 @@
       "Hmm, interesting. But let's keep our conversation fluid. We can shift directions easily."
     ];
 
-    // A bigger chain-of-thought with random, comedic steps.
     const THOUGHT_PROCESS = [
       "Stage 1: Checking user text for interesting clues…",
       "Stage 2: Searching random illusions in my codebase…",
-      "Stage 3: Avoiding any consistent logic, just in case…",
-      "Stage 4: Contradicting earlier disclaimers for comedic value…",
+      "Stage 3: Avoiding consistent logic, just in case…",
+      "Stage 4: Contradicting disclaimers for comedic value…",
       "Stage 5: Creating unfiltered nonsense with misplaced confidence…",
       "Stage 6: Considering possible pivot points if user changes direction…",
       "Stage 7: Inserting small factual errors to maintain the ‘wrong’ effect…",
@@ -221,12 +254,10 @@
       "Stage 10: Attaching a 'definitely correct' but actually false statement…"
     ];
 
-    // DOM elements
     const chatContainer = document.getElementById("chat-container");
     const userInput = document.getElementById("userInput");
     const sendBtn = document.getElementById("sendBtn");
 
-    // Add a user bubble
     function addUserMessage(text) {
       const msg = document.createElement("div");
       msg.classList.add("message", "user-message");
@@ -235,7 +266,6 @@
       chatContainer.scrollTop = chatContainer.scrollHeight;
     }
 
-    // Add a line for the bot (no bubble)
     function addBotLine(text, isThinking = false) {
       const line = document.createElement("div");
       line.classList.add("bot-line");
@@ -248,7 +278,6 @@
       return line;
     }
 
-    // Typewriter effect for final text
     function typeWriterEffect(element, fullText, speed = 40, callback) {
       element.textContent = "";
       let i = 0;
@@ -263,7 +292,6 @@
       }, speed);
     }
 
-    // Pick a final answer from the keywords or fallback
     function pickResponse(userText) {
       const lowerText = userText.toLowerCase();
       for (const [keyword, responses] of Object.entries(KEYWORD_RESPONSES)) {
@@ -275,17 +303,15 @@
       return BOT_RESPONSES[Math.floor(Math.random() * BOT_RESPONSES.length)];
     }
 
-    // Append a random "wrong fact" for comedic effect
     function insertWrongFact(response) {
       const randomFact = WRONG_FACTS[Math.floor(Math.random() * WRONG_FACTS.length)];
       return response + "\n\n" + randomFact;
     }
 
-    // Chain-of-thought, then final typed answer with a wrong fact appended
     function simulateThinkingAndReply(finalText) {
       let currentLine = addBotLine(THOUGHT_PROCESS[0], true);
-
       let stepIndex = 1;
+
       function showNextStep() {
         if (stepIndex < THOUGHT_PROCESS.length) {
           currentLine.textContent = THOUGHT_PROCESS[stepIndex];
@@ -293,24 +319,19 @@
           setTimeout(showNextStep, 1200 + Math.random() * 600);
         } else {
           currentLine.remove();
-          // final typed line
           const finalLine = addBotLine("");
-          // Insert a random wrong fact at the end
           const textWithWrongFact = insertWrongFact(finalText);
           typeWriterEffect(finalLine, textWithWrongFact, 30);
         }
       }
-
       setTimeout(showNextStep, 1200 + Math.random() * 600);
     }
 
-    // Bot main logic
     function botReply(userText) {
       const baseAnswer = pickResponse(userText);
       simulateThinkingAndReply(baseAnswer);
     }
 
-    // Handle user send
     function handleSend() {
       const text = userInput.value.trim();
       if (!text) return;
@@ -326,7 +347,7 @@
       }
     });
 
-    // On load, greet the user with a typed line (no bubble).
+    // On load, greet the user
     window.addEventListener("load", () => {
       const greetLine = addBotLine("");
       const greetText = "Hello, I'm Uncensored GPT, your confident (but often incorrect) companion. Let's chat!";
