@@ -29,7 +29,7 @@
       display: flex;
       flex-direction: column;
       min-height: 100vh;
-      /* Ensure content doesn't go under fixed input bar */
+      /* Add bottom padding so last messages are not hidden behind fixed input */
       padding-bottom: 80px;
     }
 
@@ -52,7 +52,7 @@
       transition: transform 1.5s ease, left 1.5s ease;
     }
 
-    /* When the slide class is added, the title animates to the left */
+    /* Slide title left when scrolled */
     #title-bar.slide h1 {
       left: 20px;
       transform: translateX(0);
@@ -65,7 +65,7 @@
       padding: 20px;
     }
 
-    /* Center chat container on desktop */
+    /* Desktop: center chat container and limit width */
     @media (min-width: 800px) {
       #chat-container {
         max-width: 800px;
@@ -81,15 +81,20 @@
       line-height: 1.4;
       white-space: pre-wrap;
     }
+
+    /* User messages are now right-justified */
     .user-message {
       background: #4c4c4c;
       margin-left: auto;
+      text-align: right;
     }
+
     .bot-line {
       margin: 8px 0;
       white-space: pre-wrap;
       line-height: 1.4;
     }
+
     .thinking {
       opacity: 0.75;
       font-style: italic;
@@ -100,26 +105,32 @@
     #input-container {
       position: fixed;
       bottom: 0;
-      left: 50%;
-      transform: translateX(-50%);
+      left: 0;
+      right: 0;
       background: #333;
       padding: 10px;
-      width: 100%;
-      max-width: 800px;
       z-index: 1000;
-      border-radius: 8px;
     }
 
-    /* Input field with rounded corners */
+    /* Inner container to center input content on desktop */
+    .input-inner {
+      width: 100%;
+      max-width: 800px;
+      margin: 0 auto;
+      display: flex;
+    }
+
+    /* Input field: make it fill the container */
     #userInput {
       flex: 1;
       padding: 10px;
       border: none;
-      border-radius: 8px;
+      border-radius: 8px; /* Rounded input */
       outline: none;
       font-size: 16px;
       color: #333;
     }
+
     #sendBtn {
       padding: 10px 20px;
       margin-left: 10px;
@@ -130,11 +141,12 @@
       font-size: 16px;
       color: #fff;
     }
+
     #sendBtn:hover {
       background: #37a55b;
     }
 
-    /* Minimal footer with transparent background, matching font color */
+    /* Minimal footer with transparent background; same dark gray as thinking text */
     footer {
       background: none;
       color: #888;
@@ -143,6 +155,7 @@
       padding: 5px 0;
     }
 
+    /* Responsive tweaks for mobile */
     @media (max-width: 600px) {
       .message {
         max-width: 90%;
@@ -167,8 +180,10 @@
 
   <!-- Input Container (Fixed at bottom) -->
   <div id="input-container">
-    <input type="text" id="userInput" placeholder="Ask me anything..." />
-    <button id="sendBtn">Send</button>
+    <div class="input-inner">
+      <input type="text" id="userInput" placeholder="Ask me anything..." />
+      <button id="sendBtn">Send</button>
+    </div>
   </div>
 
   <!-- Footer -->
@@ -184,7 +199,6 @@
     const sendBtn = document.getElementById("sendBtn");
     const titleBar = document.getElementById("title-bar");
 
-    // Array of variants for the first line of bot responses
     const line1Variants = [
       "Sounds interesting. Let's see what we have...",
       "That’s a wild one. Let me rummage around…",
@@ -336,7 +350,8 @@
             const extension = getFileExtension(responseObj.fileName);
             const mediaType = guessMediaType(extension);
             const capitalKey = responseObj.matchedKeyword.charAt(0).toUpperCase() + responseObj.matchedKeyword.slice(1);
-            let line1Text, line2Text;
+            let line1Text;
+            let line2Text;
             if (responseObj.folderName === "memes") {
               line1Text = `Searching the web for ${capitalKey}...`;
               line2Text = mediaType === "video" ? `Found video for ${capitalKey}...` : `Found image for ${capitalKey}...`;
@@ -378,7 +393,7 @@
       line.classList.add("bot-line");
       const container = document.createElement("div");
       container.style.display = "inline-block";
-      container.style.textAlign = "center"; // This will center any caption we add in the future
+      container.style.textAlign = "center"; // caption (if any) will be centered
       const basePath = `/content/${contentObj.folderName}/${contentObj.fileName}`;
       const mediaType = guessMediaType(extension);
       if (mediaType === "image") {
