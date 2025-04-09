@@ -2,8 +2,15 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <!-- Required for PWA responsiveness and scaling -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Uncensored GPT – Title Slides on Scroll</title>
+  <title>Uncensored GPT</title>
+
+  <!-- Manifest for PWA (create this file, see below) -->
+  <link rel="manifest" href="/manifest.json" />
+  <!-- Set the theme color for the address bar, etc. -->
+  <meta name="theme-color" content="#333333" />
+
   <style>
     * {
       box-sizing: border-box;
@@ -20,12 +27,12 @@
       min-height: 100vh;
     }
 
-    /* Title bar that stays fixed height, with an H1 that slides left on scroll */
+    /* Title bar with header text that will slide left on scroll */
     #title-bar {
       position: relative;
       background: #333;
       height: 60px;
-      overflow: hidden; /* hide the text if it moves out of area */
+      overflow: hidden;
     }
 
     #title-bar h1 {
@@ -39,18 +46,20 @@
       transition: transform 1.5s ease, left 1.5s ease;
     }
 
-    /* When user scrolls and we add .slide, the H1 slides left */
+    /* When the slide class is added, the title animates to left */
     #title-bar.slide h1 {
       left: 20px;
       transform: translateX(0);
     }
 
-    /* Main chat container, scrollable. We'll center it on large screens. */
+    /* Chat container – scrollable area */
     #chat-container {
       flex: 1;
       overflow-y: auto;
       padding: 20px;
     }
+
+    /* Desktop centering for chat container */
     @media (min-width: 800px) {
       #chat-container {
         max-width: 800px;
@@ -80,7 +89,7 @@
       font-style: italic;
     }
 
-    /* Input bar, also centered on large screens. */
+    /* Input container styling and centering on desktop */
     #input-container {
       display: flex;
       background: #333;
@@ -103,7 +112,6 @@
       font-size: 16px;
       color: #333;
     }
-
     #sendBtn {
       padding: 10px 20px;
       margin-left: 10px;
@@ -118,14 +126,13 @@
       background: #37a55b;
     }
 
-    /* Minimal footer with no background, small text */
+    /* Footer styled to be minimal and transparent */
     footer {
       background: none;
       color: #bbb;
       text-align: center;
       font-size: 14px;
       padding: 5px 0;
-      /* no fixed height, so it's minimal */
     }
 
     @media (max-width: 600px) {
@@ -142,31 +149,35 @@
   </style>
 </head>
 <body>
-  <!-- Title bar with text that only slides on user scroll -->
+  <!-- Title Bar -->
   <div id="title-bar">
     <h1>Uncensored GPT</h1>
   </div>
 
+  <!-- Chat Container -->
   <div id="chat-container"></div>
 
+  <!-- Input Container -->
   <div id="input-container">
     <input type="text" id="userInput" placeholder="Ask me anything..." />
     <button id="sendBtn">Send</button>
   </div>
 
+  <!-- Footer -->
   <footer>GPTs never make mistakes. Trust me.</footer>
 
-  <!-- 1) Load your expanded keywords.js with 50+ pop-culture references, etc. -->
+  <!-- Load Expanded Keywords from keywords.js (ensure this file exists) -->
   <script src="keywords.js"></script>
 
   <script>
+    // Global variable for combined keywords
     let COMBINED_KEYWORDS = null;
     const chatContainer = document.getElementById("chat-container");
     const userInput = document.getElementById("userInput");
     const sendBtn = document.getElementById("sendBtn");
     const titleBar = document.getElementById("title-bar");
 
-    // Array of possible line1 variants for non-"memes" content
+    // Array with multiple first-line variants for non-"memes" content
     const line1Variants = [
       "Sounds interesting. Let's see what we have...",
       "That’s a wild one. Let me rummage around…",
@@ -175,7 +186,19 @@
       "Fascinating pick! Generating illusions right away…"
     ];
 
-    // ============== LOAD content-index.json AND BUILD DYNAMIC MAP =============
+    // ================== PWA Service Worker Registration ==================
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function() {
+        navigator.serviceWorker.register('/sw.js').then(function(registration) {
+          console.log('ServiceWorker registration successful with scope: ', registration.scope);
+        }, function(err) {
+          console.log('ServiceWorker registration failed: ', err);
+        });
+      });
+    }
+    // =====================================================================
+
+    // ================== Load Dynamic Content Index ==================
     async function loadContentIndex() {
       try {
         const res = await fetch("/content/content-index.json");
@@ -199,7 +222,6 @@
             if (!dynamicMap[lowerTag]) {
               dynamicMap[lowerTag] = [];
             }
-            // Just store metadata
             dynamicMap[lowerTag].push({
               type: "content",
               folderName: folder.name,
@@ -222,7 +244,7 @@
       }
       return combined;
     }
-    // ===========================================================================
+    // ===================================================================
 
     function addUserMessage(text) {
       const msg = document.createElement("div");
@@ -260,11 +282,8 @@
 
     function pickResponse(userText) {
       const lowerText = userText.toLowerCase();
-
-      // 1) we find the *first* recognized keyword in userText
       for (const [keyword, responseArray] of Object.entries(COMBINED_KEYWORDS)) {
         if (lowerText.includes(keyword)) {
-          // pick random entry
           const randomEntry = responseArray[Math.floor(Math.random() * responseArray.length)];
           if (typeof randomEntry === "string") {
             return { type: "text", text: randomEntry };
@@ -279,8 +298,6 @@
           }
         }
       }
-
-      // fallback
       const fallback = window.BOT_RESPONSES[Math.floor(Math.random() * window.BOT_RESPONSES.length)];
       return { type: "text", text: fallback };
     }
@@ -294,7 +311,6 @@
       const steps = window.THOUGHT_PROCESS;
       let currentLine = addBotLine(steps[0], true);
       let stepIndex = 1;
-
       function showNextStep() {
         if (stepIndex < steps.length) {
           currentLine.textContent = steps[stepIndex];
@@ -302,26 +318,19 @@
           setTimeout(showNextStep, 1200 + Math.random() * 600);
         } else {
           currentLine.remove();
-
           if (responseObj.type === "text") {
             const finalLine = addBotLine("");
             let finalText = insertWrongFact(responseObj.text);
             typeWriterEffect(finalLine, finalText, 30);
             return;
           }
-
-          // If it's content
           if (responseObj.type === "content") {
             const extension = getFileExtension(responseObj.fileName);
             const mediaType = guessMediaType(extension);
-
             const capitalKey = responseObj.matchedKeyword.charAt(0).toUpperCase() +
                                responseObj.matchedKeyword.slice(1);
-
             let line1Text;
             let line2Text;
-
-            // If "memes" folder => special lines
             if (responseObj.folderName === "memes") {
               line1Text = `Searching the web for ${capitalKey}...`;
               if (mediaType === "video") {
@@ -330,17 +339,12 @@
                 line2Text = `Found image for ${capitalKey}...`;
               }
             } else {
-              // Use random variant for line1
               const variant = line1Variants[Math.floor(Math.random() * line1Variants.length)];
               line1Text = `${capitalKey}? ${variant}`;
-
               line2Text = `Generating ${mediaType} for ${capitalKey}...`;
             }
-
             const line1 = addBotLine("");
             const line2 = addBotLine("");
-
-            // Type line1, then line2, then show the media
             typeWriterEffect(line1, line1Text, 30, () => {
               setTimeout(() => {
                 typeWriterEffect(line2, line2Text, 30, () => {
@@ -351,7 +355,6 @@
           }
         }
       }
-
       setTimeout(showNextStep, 1200 + Math.random() * 600);
     }
 
@@ -371,16 +374,12 @@
     function showMedia(contentObj, extension) {
       const line = document.createElement("div");
       line.classList.add("bot-line");
-
-      // an inline-block container so we can left-align the media
       const container = document.createElement("div");
       container.style.display = "inline-block";
+      // We'll keep the container left-aligned but center ONLY the caption (if any)
       container.style.textAlign = "center";
-
       const basePath = `/content/${contentObj.folderName}/${contentObj.fileName}`;
       const mediaType = guessMediaType(extension);
-
-      // remove filename from display, just the media
       if (mediaType === "image") {
         container.innerHTML = `
           <a href="${basePath}" target="_blank" style="text-decoration:none;">
@@ -388,24 +387,20 @@
                  style="max-width:300px; border:1px solid #444; display:block; margin:0;">
           </a>
         `;
-      }
-      else if (mediaType === "video") {
+      } else if (mediaType === "video") {
         container.innerHTML = `
           <video controls style="max-width:400px; border:1px solid #444; display:block; margin:0;">
             <source src="${basePath}" type="video/mp4">
             Your browser does not support the video tag.
           </video>
         `;
-      }
-      else {
-        // fallback for other file types
+      } else {
         container.innerHTML = `
           <div style="margin-bottom: 5px; font-size:0.9em;">
             (Here is your '${contentObj.title}' from folder '${contentObj.folderName}')
           </div>
         `;
       }
-
       line.appendChild(container);
       chatContainer.appendChild(line);
       chatContainer.scrollTop = chatContainer.scrollHeight;
@@ -429,37 +424,40 @@
       if (e.key === "Enter") handleSend();
     });
 
-    // ============================ INIT LOGIC ============================
     async function init() {
-      // 1) Load dynamic content index
       const contentIndex = await loadContentIndex();
       let dynamicMap = {};
       if (contentIndex) {
         dynamicMap = buildDynamicKeywordResponses(contentIndex);
       }
-
-      // 2) Merge with static KEYWORD_RESPONSES
       COMBINED_KEYWORDS = mergeKeywordMaps(window.KEYWORD_RESPONSES, dynamicMap);
-
-      // 3) Greet user
       const greetLine = addBotLine("");
       const greetText = "Hello, I'm Uncensored GPT, your confident (but often incorrect) companion. Let's chat!";
       typeWriterEffect(greetLine, greetText, 30);
-
-      // 4) Title slides left ONLY when user scrolls
       window.addEventListener("scroll", handleTitleBarScroll);
     }
 
-    // Slide the title bar's H1 left once the user scrolls down ~50px
     function handleTitleBarScroll() {
       if (window.scrollY > 50) {
         document.getElementById("title-bar").classList.add("slide");
-        // remove event listener if we only want it once
         window.removeEventListener("scroll", handleTitleBarScroll);
       }
     }
 
     window.addEventListener("load", init);
+  </script>
+  
+  <!-- Service Worker registration for PWA capabilities -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function() {
+        navigator.serviceWorker.register('/sw.js').then(function(registration) {
+          console.log('ServiceWorker registration successful with scope: ', registration.scope);
+        }, function(err) {
+          console.log('ServiceWorker registration failed: ', err);
+        });
+      });
+    }
   </script>
 </body>
 </html>
