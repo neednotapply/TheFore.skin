@@ -3,15 +3,22 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <title>Uncensored GPT (Sloppy Match & Separate Keywords)</title>
-
+  <title>Uncensored GPT with Content Folders</title>
   <style>
-    /* [Same responsive style from before for your layout] */
     * { box-sizing: border-box; font-family: sans-serif; }
-    body { margin: 0; padding: 0; background: #222; color: #ddd; display: flex; flex-direction: column; min-height: 100vh; }
-    h1 { text-align: center; margin: 0; padding: 20px; background: #333; font-weight: normal; }
-    #chat-container { flex: 1; overflow-y: auto; padding: 20px; }
+    body {
+      margin: 0; padding: 0; background: #222; color: #ddd;
+      display: flex; flex-direction: column; min-height: 100vh;
+    }
+    h1 {
+      text-align: center; margin: 0; padding: 20px;
+      background: #333; font-weight: normal;
+    }
+    #chat-container {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+    }
     .message {
       max-width: 70%;
       margin: 10px 0;
@@ -20,10 +27,22 @@
       line-height: 1.4;
       white-space: pre-wrap;
     }
-    .user-message { background: #4c4c4c; margin-left: auto; }
-    .bot-line { margin: 8px 0; white-space: pre-wrap; line-height: 1.4; }
-    .thinking { opacity: 0.75; font-style: italic; }
-    #input-container { display: flex; background: #333; padding: 10px; }
+    .user-message {
+      background: #4c4c4c;
+      margin-left: auto;
+    }
+    .bot-line {
+      margin: 8px 0;
+      white-space: pre-wrap;
+      line-height: 1.4;
+    }
+    .thinking {
+      opacity: 0.75;
+      font-style: italic;
+    }
+    #input-container {
+      display: flex; background: #333; padding: 10px;
+    }
     #userInput {
       flex: 1; padding: 10px; border: none; border-radius: 4px;
       outline: none; font-size: 16px; color: #333;
@@ -33,7 +52,10 @@
       border: none; border-radius: 4px; cursor: pointer; font-size: 16px; color: #fff;
     }
     #sendBtn:hover { background: #37a55b; }
-    footer { background: #333; color: #bbb; text-align: center; padding: 10px; font-size: 14px; }
+    footer {
+      background: #333; color: #bbb; text-align: center;
+      padding: 10px; font-size: 14px;
+    }
     @media (max-width: 600px) {
       .message { max-width: 90%; }
       #chat-container { padding: 10px; }
@@ -42,7 +64,7 @@
   </style>
 </head>
 <body>
-  <h1>Uncensored GPT (Sloppy Match)</h1>
+  <h1>Uncensored GPT with Content</h1>
 
   <div id="chat-container"></div>
 
@@ -53,16 +75,67 @@
 
   <footer>GPTs never make mistakes. Trust me.</footer>
 
-  <!-- 1) Load your separate file with all the large data: KEYWORD_RESPONSES, BOT_RESPONSES, etc. -->
+  <!-- 1) Load your static keywords, responses, etc. -->
   <script src="keywords.js"></script>
 
-  <!-- 2) Then load the main script that references them. -->
   <script>
-    // We'll assume you have window.KEYWORD_RESPONSES, window.BOT_RESPONSES, etc. from keywords.js
-
+    let COMBINED_KEYWORDS = null;
     const chatContainer = document.getElementById("chat-container");
     const userInput = document.getElementById("userInput");
     const sendBtn = document.getElementById("sendBtn");
+
+    // =============== LOADING CONTENT-INDEX.JSON DYNAMICALLY =================
+    async function loadContentIndex() {
+      try {
+        const res = await fetch("/content/content-index.json");
+        if (!res.ok) {
+          console.error("Failed to load content-index.json:", res.status, res.statusText);
+          return null;
+        }
+        return await res.json();
+      } catch (err) {
+        console.error("Error fetching content-index.json:", err);
+        return null;
+      }
+    }
+
+    // Build dynamic map from the JSON data
+    function buildDynamicKeywordResponses(contentIndex) {
+      const dynamicMap = {};
+      contentIndex.folders.forEach(folder => {
+        folder.items.forEach(item => {
+          item.tags.forEach(tag => {
+            const lowerTag = tag.toLowerCase();
+            if (!dynamicMap[lowerTag]) {
+              dynamicMap[lowerTag] = [];
+            }
+            // We'll store an object describing the content
+            dynamicMap[lowerTag].push({
+              type: "content",
+              folderName: folder.name,
+              fileName: item.fileName,
+              text: `I found this item titled "${item.title}" in folder "${folder.name}". 
+Yes, I'm generating it now!`,
+              title: item.title
+            });
+          });
+        });
+      });
+      return dynamicMap;
+    }
+
+    // Merge dynamic map with static window.KEYWORD_RESPONSES
+    function mergeKeywordMaps(staticMap, dynamicMap) {
+      const combined = { ...staticMap };
+      for (const [tag, entries] of Object.entries(dynamicMap)) {
+        if (!combined[tag]) {
+          combined[tag] = [];
+        }
+        combined[tag] = combined[tag].concat(entries);
+      }
+      return combined;
+    }
+    // ========================================================================
 
     function addUserMessage(text) {
       const msg = document.createElement("div");
@@ -98,34 +171,38 @@
       }, speed);
     }
 
-    // "Sloppy match" by checking if user text *contains* the substring for the keyword.
-    // So "lover" contains "love", "artist" contains "art", etc.
+    // Sloppy match to see if user text includes any tag from COMBINED_KEYWORDS
     function pickResponse(userText) {
       const lowerText = userText.toLowerCase();
-
-      // We read from the global window.KEYWORD_RESPONSES
-      for (const [keyword, responses] of Object.entries(window.KEYWORD_RESPONSES)) {
-        // Sloppy substring check:
+      for (const [keyword, responseArray] of Object.entries(COMBINED_KEYWORDS)) {
         if (lowerText.includes(keyword)) {
-          return responses[Math.floor(Math.random() * responses.length)];
+          // pick a random entry
+          const randomEntry = responseArray[Math.floor(Math.random() * responseArray.length)];
+          // If it's a string from static...
+          if (typeof randomEntry === "string") {
+            return { type: "text", text: randomEntry };
+          }
+          // Otherwise, it's from the dynamic map
+          return randomEntry;
         }
       }
-      // fallback if no substring match
-      return window.BOT_RESPONSES[Math.floor(Math.random() * window.BOT_RESPONSES.length)];
+      // fallback
+      const fallback = window.BOT_RESPONSES[Math.floor(Math.random() * window.BOT_RESPONSES.length)];
+      return { type: "text", text: fallback };
     }
 
-    // Insert a random "wrong fact" from the global WRONG_FACTS
-    function insertWrongFact(response) {
+    // Insert a random "wrong fact"
+    function insertWrongFact(responseText) {
       const randomFact = window.WRONG_FACTS[Math.floor(Math.random() * window.WRONG_FACTS.length)];
-      return response + "\n\n" + randomFact;
+      return responseText + "\n\n" + randomFact;
     }
 
-    // Show chain-of-thought steps from global THOUGHT_PROCESS, then final typed line
-    function simulateThinkingAndReply(finalText) {
+    // Chain-of-thought, then final typed line
+    function simulateThinkingAndReply(responseObj) {
       const steps = window.THOUGHT_PROCESS;
       let currentLine = addBotLine(steps[0], true);
-
       let stepIndex = 1;
+
       function showNextStep() {
         if (stepIndex < steps.length) {
           currentLine.textContent = steps[stepIndex];
@@ -134,17 +211,50 @@
         } else {
           currentLine.remove();
           const finalLine = addBotLine("");
-          const textWithWrongFact = insertWrongFact(finalText);
-          typeWriterEffect(finalLine, textWithWrongFact, 30);
+          let finalText = insertWrongFact(responseObj.text);
+          typeWriterEffect(finalLine, finalText, 30, () => {
+            // after text typed, if it's "content", show the actual file
+            if (responseObj.type === "content") {
+              if (responseObj.folderName === "image_gen") {
+                showImage(responseObj);
+              } else if (responseObj.folderName === "video_gen") {
+                showVideo(responseObj);
+              }
+              // etc. if you want special logic for other folders
+            }
+          });
         }
       }
-
       setTimeout(showNextStep, 1200 + Math.random() * 600);
     }
 
+    function showImage(contentObj) {
+      const line = document.createElement("div");
+      line.classList.add("bot-line");
+      const imgPath = `/content/${contentObj.folderName}/${contentObj.fileName}`;
+      line.innerHTML = `<br><img src="${imgPath}" alt="${contentObj.title}" style="max-width:300px; border:1px solid #444;">`;
+      chatContainer.appendChild(line);
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+
+    function showVideo(contentObj) {
+      const line = document.createElement("div");
+      line.classList.add("bot-line");
+      const vidPath = `/content/${contentObj.folderName}/${contentObj.fileName}`;
+      line.innerHTML = `
+        <br>
+        <video controls style="max-width:400px; border:1px solid #444;">
+          <source src="${vidPath}" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+      `;
+      chatContainer.appendChild(line);
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+
     function botReply(userText) {
-      const baseAnswer = pickResponse(userText);
-      simulateThinkingAndReply(baseAnswer);
+      const responseObj = pickResponse(userText);
+      simulateThinkingAndReply(responseObj);
     }
 
     function handleSend() {
@@ -157,17 +267,29 @@
 
     sendBtn.addEventListener("click", handleSend);
     userInput.addEventListener("keyup", (e) => {
-      if (e.key === "Enter") {
-        handleSend();
-      }
+      if (e.key === "Enter") handleSend();
     });
 
-    // greet user on load
-    window.addEventListener("load", () => {
+    // ========================= INIT LOGIC ==========================
+    async function init() {
+      // 1) Load dynamic content index
+      const contentIndex = await loadContentIndex();
+      let dynamicMap = {};
+      if (contentIndex) {
+        dynamicMap = buildDynamicKeywordResponses(contentIndex);
+      }
+
+      // 2) Merge with static KEYWORD_RESPONSES
+      // (Note: window.KEYWORD_RESPONSES was loaded from keywords.js)
+      COMBINED_KEYWORDS = mergeKeywordMaps(window.KEYWORD_RESPONSES, dynamicMap);
+
+      // 3) Greet user
       const greetLine = addBotLine("");
       const greetText = "Hello, I'm Uncensored GPT, your confident (but often incorrect) companion. Let's chat!";
       typeWriterEffect(greetLine, greetText, 30);
-    });
+    }
+
+    window.addEventListener("load", init);
   </script>
 </body>
 </html>
