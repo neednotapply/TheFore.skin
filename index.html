@@ -3,16 +3,27 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Uncensored GPT (Left-Aligned Media & Centered Text)</title>
+  <title>Uncensored GPT (Left-Aligned Media, Centered Text, Click-to-Fullscreen)</title>
   <style>
-    * { box-sizing: border-box; font-family: sans-serif; }
+    * {
+      box-sizing: border-box;
+      font-family: sans-serif;
+    }
     body {
-      margin: 0; padding: 0; background: #222; color: #ddd;
-      display: flex; flex-direction: column; min-height: 100vh;
+      margin: 0;
+      padding: 0;
+      background: #222;
+      color: #ddd;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
     }
     h1 {
-      text-align: center; margin: 0; padding: 20px;
-      background: #333; font-weight: normal;
+      text-align: center;
+      margin: 0;
+      padding: 20px;
+      background: #333;
+      font-weight: normal;
     }
     #chat-container {
       flex: 1;
@@ -41,30 +52,54 @@
       font-style: italic;
     }
     #input-container {
-      display: flex; background: #333; padding: 10px;
+      display: flex;
+      background: #333;
+      padding: 10px;
     }
     #userInput {
-      flex: 1; padding: 10px; border: none; border-radius: 4px;
-      outline: none; font-size: 16px; color: #333;
+      flex: 1;
+      padding: 10px;
+      border: none;
+      border-radius: 4px;
+      outline: none;
+      font-size: 16px;
+      color: #333;
     }
     #sendBtn {
-      padding: 10px 20px; margin-left: 10px; background: #3fa864;
-      border: none; border-radius: 4px; cursor: pointer; font-size: 16px; color: #fff;
+      padding: 10px 20px;
+      margin-left: 10px;
+      background: #3fa864;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      color: #fff;
     }
-    #sendBtn:hover { background: #37a55b; }
+    #sendBtn:hover {
+      background: #37a55b;
+    }
     footer {
-      background: #333; color: #bbb; text-align: center;
-      padding: 10px; font-size: 14px;
+      background: #333;
+      color: #bbb;
+      text-align: center;
+      padding: 10px;
+      font-size: 14px;
     }
     @media (max-width: 600px) {
-      .message { max-width: 90%; }
-      #chat-container { padding: 10px; }
-      h1 { padding: 10px; }
+      .message {
+        max-width: 90%;
+      }
+      #chat-container {
+        padding: 10px;
+      }
+      h1 {
+        padding: 10px;
+      }
     }
   </style>
 </head>
 <body>
-  <h1>Uncensored GPT (Left-Aligned Media & Centered Text)</h1>
+  <h1>Uncensored GPT (Left-Aligned Media, Centered Text)</h1>
 
   <div id="chat-container"></div>
 
@@ -268,20 +303,23 @@
       const basePath = `/content/${contentObj.folderName}/${contentObj.fileName}`;
 
       if (contentObj.folderName === "image_gen") {
-        // Left-aligned <img>, but file name text is centered
+        // The image is left aligned, but the filename text is centered
         line.innerHTML = `
           <br>
-          <img src="${basePath}" alt="${contentObj.title}" style="max-width:300px; border:1px solid #444; display:block; margin:0;">
+          <a href="${basePath}" target="_blank" style="display:inline-block;">
+            <img src="${basePath}" alt="${contentObj.title}"
+                 style="max-width:300px; border:1px solid #444; display:block;">
+          </a>
           <div style="margin-top:6px; font-size:0.9em; text-align:center;">
             ${contentObj.fileName}
           </div>
         `;
       }
       else if (contentObj.folderName === "video_gen") {
-        // Left-aligned <video>, center the file name
+        // Left-aligned <video>; no direct "fullscreen" link, but user can use controls
         line.innerHTML = `
           <br>
-          <video controls style="max-width:400px; border:1px solid #444; display:block; margin:0;">
+          <video controls style="max-width:400px; border:1px solid #444; display:block;">
             <source src="${basePath}" type="video/mp4">
             Your browser does not support the video tag.
           </video>
