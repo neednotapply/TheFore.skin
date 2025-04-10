@@ -382,7 +382,7 @@
     function guessMediaType(extension) {
       const imageExts = ["jpg","jpeg","png","gif","webp","bmp","jfif"];
       if (imageExts.includes(extension)) return "image";
-      if (extension === "mp4") return "video";
+      if (extension === "mp4", "mov") return "video";
       return "unknown";
     }
 
