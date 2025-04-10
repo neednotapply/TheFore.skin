@@ -29,7 +29,7 @@
       display: flex;
       flex-direction: column;
       min-height: 100vh;
-      padding-bottom: 80px; /* Extra space for fixed input container */
+      padding-bottom: 80px;
     }
 
     /* Title Bar */
@@ -51,7 +51,7 @@
       transition: transform 1.5s ease, left 1.5s ease;
     }
 
-    /* When the slide class is added, the title moves to the left */
+    /* Slide the title left when scrolled */
     #title-bar.slide h1 {
       left: 20px;
       transform: translateX(0);
@@ -77,11 +77,10 @@
       line-height: 1.4;
       white-space: pre-wrap;
       padding: 10px;
-      /* Remove fixed max-width here; the container will shrink/grow with the content */
       display: inline-block;
       max-width: 70%;
     }
-    /* The container for user messages will align the bubble to the right */
+    /* Container to right-justify user messages */
     .user-message-container {
       text-align: right;
       width: 100%;
@@ -110,7 +109,7 @@
       padding: 10px;
       z-index: 1000;
     }
-    /* Inner container to center input content on desktop */
+    /* Inner container to center the input on desktop */
     .input-inner {
       width: 100%;
       max-width: 800px;
@@ -141,7 +140,7 @@
       background: #37a55b;
     }
 
-    /* Footer with no background, matching thinking text color */
+    /* Minimal footer with no background */
     footer {
       background: none;
       color: #888;
@@ -237,7 +236,7 @@
             }
             dynamicMap[lowerTag].push({
               type: "content",
-              folderName: folder.name,
+              folderName: folder.name, // expecting "web" instead of "memes"
               fileName: item.fileName,
               title: item.title
             });
@@ -258,11 +257,11 @@
       return combined;
     }
 
-    // Updated addUserMessage function: wraps the message in a container with text-align:right.
+    // Updated addUserMessage to wrap the message in a right-aligned container
     function addUserMessage(text) {
       const container = document.createElement("div");
       container.classList.add("user-message-container");
-      container.style.textAlign = "right"; 
+      container.style.textAlign = "right";
       container.style.width = "100%";
       const msg = document.createElement("div");
       msg.classList.add("message", "user-message");
@@ -350,7 +349,8 @@
                                responseObj.matchedKeyword.slice(1);
             let line1Text;
             let line2Text;
-            if (responseObj.folderName === "memes") {
+            // Updated condition: instead of "memes", now check for "web"
+            if (responseObj.folderName === "web") {
               line1Text = `Searching the web for ${capitalKey}...`;
               line2Text = mediaType === "video" ? `Found video for ${capitalKey}...` : `Found image for ${capitalKey}...`;
             } else {
@@ -391,13 +391,13 @@
       line.classList.add("bot-line");
       const container = document.createElement("div");
       container.style.display = "inline-block";
-      container.style.textAlign = "center"; // centers any caption if later added
+      container.style.textAlign = "center";
       const basePath = `/content/${contentObj.folderName}/${contentObj.fileName}`;
       const mediaType = guessMediaType(extension);
       if (mediaType === "image") {
         container.innerHTML = `
           <a href="${basePath}" target="_blank" style="text-decoration:none;">
-            <img src="${basePath}" alt="${contentObj.title}" 
+            <img src="${basePath}" alt="${contentObj.title}"
                  style="max-width:300px; border:1px solid #444; display:block; margin:0;">
           </a>
         `;

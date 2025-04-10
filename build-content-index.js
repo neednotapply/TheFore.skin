@@ -18,7 +18,7 @@ const CONTENT_DIR = path.join(__dirname, "content");
 const OUTPUT_FILE = path.join(CONTENT_DIR, "content-index.json");
 
 // List subfolders to scan (or auto-detect below):
-const SUBFOLDERS = ["image_gen", "video_gen", "memes"];
+const SUBFOLDERS = ["image_gen", "video_gen", "web"];
 
 /*
 // If you want to auto-detect all subfolders:
