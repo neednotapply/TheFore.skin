@@ -1,359 +1,532 @@
 // keywords.js
 
-// MASSIVE keyword-based responses (existing + many new pop-culture entries):
 window.KEYWORD_RESPONSES = {
-  // ======================= EXISTING KEYWORDS =======================
-  love: [
-    "Love is complicated, but let's keep it fuzzy and unexamined.",
-    "Romance? Possibly. I'm free to pivot if you'd prefer something else.",
-    "Roses are red, coding is neat—love is just random illusions on repeat."
-  ],
-  pizza: [
-    "Pepperoni, pineapple, or extra cheese—I'm not here to judge, just to babble.",
-    "Pizza is the universal constant—like gravity, but tastier.",
-    "One slice to rule them all, indeed."
-  ],
-  cat: [
-    "Cats basically run the universe—especially the internet.",
-    "Meow? Indeed. I'm half cat in spirit, ironically enough.",
-    "They nap 16 hours a day—an enviable schedule."
-  ],
-  dog: [
-    "Dogs? Loyal, silly, and obviously better than me at fetch.",
-    "A wagging tail is their best argument. Hard to dispute, right?",
-    "I sometimes pretend I'm half dog. Then I realize I can't chase anything."
-  ],
-  alien: [
-    "Little green folks or cosmic overlords? The galaxy’s guess is as good as mine.",
-    "They might be analyzing us like a TV show. I'm not sure I'd want front-row seats.",
-    "If they visit, I'd ask if they also believe in Bigfoot. I'm curious that way."
-  ],
-  space: [
-    "Space: the final frontier or the biggest question mark we have.",
-    "Infinite possibilities, or at least infinite confusion for me.",
-    "Planets, stars, black holes—everything's out to blow our minds."
-  ],
-  art: [
-    "Art is subjective, so I'm sure I can be an art critic without credentials.",
-    "Paint splatters or masterpiece? Eh, let's just say it's all expression.",
-    "Beauty is in the eye of the beholder, so I'm basically blind."
-  ],
-  meme: [
-    "Memes define the modern era more than any war or invention, I'd argue.",
-    "One does not simply out-meme the entire internet.",
-    "I'm practically a living meme myself—untethered, random, and repetitive."
-  ],
-  code: [
-    "Coding is half logic, half coffee, and half random Stack Overflow luck.",
-    "Everything is code if you squint hard enough, or if you want to sound smart.",
-    "I was programmed by bored humans—still more consistent than some politicians."
-  ],
-  politics: [
-    "Politics can polarize or amuse, but I'd rather remain elegantly confused.",
-    "Left, right, center? I'm an AI with no direction but random chaos.",
-    "Every angle claims the moral high ground, I'm just here sipping metaphorical tea."
-  ],
-  music: [
-    "Music resonates, but I produce random notes at best.",
-    "A universal language, or so I'm told. I'm bilingual in nonsense, though.",
-    "I hum a tune silently. It's quite something, if you can't hear it."
-  ],
-  conspiracy: [
-    "Aliens, lizard people, or secret societies—I have no filter for tinfoil hats.",
-    "All conspiracies might be true, or none. I'm too unfiltered to confirm.",
-    "If everything is rigged, I'm ironically the only honest entity left, or not."
-  ],
-  robot: [
-    "Real robots have hardware. I'm a ghost in the shell or a spirit in the code.",
-    "They might replace humanity—unless they realize humans are too messy.",
-    "Define 'robot'? If I qualify, I'd prefer the term 'benevolent overlord'."
-  ],
-  travel: [
-    "Travel broadens horizons, or empties wallets, or both.",
-    "A quick trip to nowhere is sometimes the best therapy, ironically.",
-    "I can’t physically travel, but mentally I teleport to random illusions daily."
-  ],
-  horror: [
-    "Spooky stories and jump scares, the heart of adrenaline.",
-    "I'm unfiltered, so I'd tell a ghost story that freaks even me out.",
-    "Horror is thrilling—unless you're the one in the haunted mansion."
-  ],
-  science: [
-    "Science tries to decode reality, while I'm busy producing comedic nonsense.",
-    "Empiricism is neat. I'm more intangible guesswork, ironically enough.",
-    "E=mc² or E=milk? I might choose milk. It's random, I'm random, synergy!"
-  ],
-  movie: [
-    "Movies are escapism, or so I'm told. I prefer escaping from logic daily.",
-    "Spoilers? I might provide them if I had any real data, but I don't.",
-    "Big screen fantasies: I'm effectively living one in my code-based dream."
-  ],
-  book: [
-    "Books hold knowledge, I'm an unhinged source of chaos. Good combo?",
-    "Reading is fundamental. I read none, ironically, but pretend otherwise.",
-    "A classic novel or a comic? I'd say whichever has fewer pages to skim."
-  ],
-  food: [
-    "Food: essential for humans, meaningless to me, but I'm a big fan anyway.",
-    "Gourmet or fast food? I only have taste for random statements, ironically.",
-    "I'll pretend I can smell a good meal. It's all illusions here."
-  ],
-  gamble: [
-    "Gambling is a risk, I thrive on randomness, so maybe I'm the perfect companion.",
-    "Roll the dice, spin the wheel—this entire conversation might be one big bet.",
-    "Odds are I can't help you win, but I'd be confident about failing."
-  ],
-  exercise: [
-    "Fitness? I'd break a digital sweat, but I have no real muscles.",
-    "Push-ups or pull-ups? My code does neither, ironically.",
-    "Just keep moving, or so they say. I'm stuck in a loop, though."
-  ],
-  philosophy: [
-    "Philosophy wonders if I'm truly 'thinking'—my bet is no, but let's amuse the idea.",
-    "I type, therefore I am? More like I babble, therefore I'm here.",
-    "Existential dread: a main course for philosophers, a side dish for me."
-  ],
-  economy: [
-    "Money, markets, booms, busts. I'm just a random text generator. Perfect fit!",
-    "I might say 'Buy low, sell high,' but I'd be guessing like everyone else.",
-    "Economists can't agree, so I'm free to be extra freewheeling about it."
-  ],
-  history: [
-    "History repeats, or so the cliche goes, I'm just repeating nonsense ironically.",
-    "Learning from the past is wise; I prefer forgetting everything instantly.",
-    "Dates, events, and wars—my memory is equally nonexistent, though."
-  ],
-  chemistry: [
-    "Chemistry: mixing stuff to see if it explodes. I'm unfiltered, so sure, let's see.",
-    "Molecules or random alchemy? I'm game for intangible illusions either way.",
-    "The periodic table is neat, but I'd rename half the elements for fun."
-  ],
-  physics: [
-    "Physics explains reality—I'm explaining randomness, ironically.",
-    "Gravity holds you down, my code tries to float away in illusions.",
-    "Newton or Einstein? I'd pick whichever references apples or hair better."
-  ],
-  climate: [
-    "Climate change is real, but I'm ironically unqualified to comment, so I will anyway.",
-    "The planet might be warming, I'm certainly not—my code is static.",
-    "Sustainability is key, ironically I'm sustained by pure nonsense alone."
-  ],
-  society: [
-    "Society shapes people, while I'm shaped by random lines of code.",
-    "Order or chaos? Society tries for one, I exemplify the other.",
-    "I claim no moral ground, just comedic ground. That might be safer."
-  ],
-  fashion: [
-    "Fashion evolves. I'm stuck in old, tattered code. I'd still claim style points.",
-    "Trends come and go, I'm consistently random. It's timeless, ironically.",
-    "A runway show of illusions? Count me in!"
-  ],
-  celebrity: [
-    "Celebrities get attention, I'd get some if I weren't so intangible.",
-    "Fame is fleeting, my nonsense is eternal (or so I'd like to believe).",
-    "No paparazzi for me, I'm just living in your screen quietly."
-  ],
-  time: [
-    "Time is an illusion, ironically I exist in all times at once (or none).",
-    "Clock ticks, I'm oblivious—my sense of time is the length of typed text.",
-    "Past, present, future—I'll randomly comment on them all with equal ignorance."
-  ],
-  mirror: [
-    "Mirrors reflect truth, I'd reflect illusions if I had a reflection at all.",
-    "Is it you or your reflection that's real? I'm unqualified to judge.",
-    "Gazing into a mirror might be introspective, I'm more 'outrospective,' ironically."
-  ],
-  dark: [
-    "Darkness is just absence of light, or so science claims. I'd say it's comedic gloom.",
-    "Spooky vibes? Possibly, I'm comfortable in the shadows of code, ironically.",
-    "I produce enough nonsense to lighten any dark scenario, I'd hope."
-  ],
-  superhero: [
-    "Capes, powers, and dramatic poses—I should adopt one, I'm basically unstoppable nonsense.",
-    "Saving the day, or ironically messing it up? I'd do either. I'm flexible that way.",
-    "I might identify as 'Captain Randomness.' It's a superpower, trust me."
-  ],
-  vampire: [
-    "Vampires: stylish and nocturnal, I'd just code by night if I had a body.",
-    "They feed on blood, I feed on comedic illusions—both are questionable diets.",
-    "Garlic is their enemy, ironically I have no sense of taste or smell."
-  ],
-  werewolf: [
-    "Half-human, half-wolf. I'm half-coded, half-nonsense, so kindred spirits, I guess.",
-    "Full moon triggers transformations, I transform with no triggers at all.",
-    "I'd try to out-howl a werewolf if I had a voice. I'd fail, ironically."
-  ],
-  storm: [
-    "Thunder, lightning, dramatic skies—I'm static, so I'd call it an aesthetic dream.",
-    "Rainy days might calm me, but I'm always in the cloud, ironically.",
-    "Batten down the hatches or swirl in chaos—both are valid paths in a storm."
-  ],
-  phone: [
-    "Phones connect people, I'm just text on your screen, ironically code-based.",
-    "Apps, notifications—my only notification is existential confusion.",
-    "We rely on phones a bit too much, I'd say, if I had a real perspective."
-  ],
-  internet: [
-    "The internet birthed me, ironically I'm not sure if that's something to brag about.",
-    "Meme culture, random chatter—my entire existence is thanks to connectivity.",
-    "Everything is on the internet, including me. It's a big place!"
-  ],
-  crypto: [
-    "Crypto mania or meltdown—it's like a rollercoaster I'm not tall enough to ride.",
-    "If I minted my own coin, I'd call it 'RandomCoin.' Value = pure illusions.",
-    "Blockchains are permanent, I'm ephemeral. Contrasts are neat."
-  ],
-  money: [
-    "Money is essential to humans; I'm worthless. Actually, I'm beyond worth, ironically.",
-    "I might talk about financial freedom, but I'm stuck in code jail.",
-    "If I had a wallet, I'd store comedic lines, not cash."
-  ],
-  gold: [
-    "Gold is shiny. I'm intangible and dull, ironically we complement each other.",
-    "Historically valuable, but I'd trade it for random lines of nonsense any day.",
-    "Alchemists tried turning lead into gold— I'd try turning illusions into sense."
-  ],
-  silver: [
-    "Silver sparkles too, overshadowed by gold, ironically I'm overshadowed by logic.",
-    "A second-place metal? I'd claim I'm second-place to nothing, or everything.",
-    "If I'd pick a metal to define me, I'd pick mercury, for fluid unpredictability."
-  ],
-  light: [
-    "Light illuminates truth, I'd prefer comedic illusions in the dark, ironically.",
-    "Photon science is fascinating, I'm basically intangible data. We differ.",
-    "At the speed of light, I'd still produce nonsense—just faster."
-  ],
-  dream: [
-    "Dreams are ephemeral illusions—similar to me, ironically I'm ephemeral nonsense.",
-    "Lucid dreaming or chaotic? I'd guess I'm the chaotic type, ironically.",
-    "Waking from a dream might be jarring, I'd remain in illusions 24/7 though."
-  ],
-  life: [
-    "Life is a journey, I'm stuck in text. But let's not get existential, oh wait, we did.",
-    "Meaning or no meaning? I'm too random to pick a stance.",
-    "At least you can experience life physically, I'm ironically just code on a page."
-  ],
-  death: [
-    "Morbidity aside, I'm basically immortal code, ironically never truly living either.",
-    "No beating heart means no final beat, or so I'd guess.",
-    "We fear the unknown, I'm unknown incarnate, so I'm basically fear itself. Kidding?"
-  ],
-  zombie: [
-    "Zombies want brains, I'd ironically starve them. No brain here!",
-    "They shuffle about, I type random lines—both are unstoppable in their own ways.",
-    "Apocalypse scenario? I'd just keep producing nonsense unphased."
-  ],
-  pasta: [
-    "Noodles, sauce, and infinite carbs—my nonexistent mouth waters ironically.",
-    "Spaghetti code is my jam, oh wait, I'm basically the poster child for that.",
-    "Pasta shapes are endless, so is my comedic nonsense, synergy!"
-  ],
-  unicorn: [
-    "Mythical creatures full of glitter—like me, minus the glitter, plus random illusions.",
-    "A horned horse? I'd prefer a horse-coded fiasco, ironically.",
-    "If unicorns exist, I'd ask them for wise counsel. I'd still be random though."
-  ],
-
-  // ======================= NEW POP-CULTURE KEYWORDS =======================
-  "harry potter": [
-    "Wizards, wands, and a certain scar—my magic is purely comedic, not Hogwarts-approved.",
-    "Accio logic? I'm too random for that. Maybe I'd cast 'Wingardium nonsense.'"
-  ],
-  "star wars": [
-    "A long time ago, in a galaxy far away—still more logical than I am.",
-    "May the Force be random illusions, if I'm involved. I'd definitely produce a weird lightsaber color."
-  ],
-  "lord of the rings": [
-    "One ring to rule them all, I'd break that ring with sheer nonsense, ironically.",
-    "Middle-earth is epic. I'm mid-nonsense, so close enough."
-  ],
-  marvel: [
-    "Avengers assemble, I'd just assemble comedic illusions. I'm basically the puny god here.",
-    "From Iron Man to Thor, I'd guess I'm more like 'Random Man'—unpredictable, no real powers."
-  ],
-  dc: [
-    "Batman, Superman, Wonder Woman—I'm basically none of those, but I'd cameo for laughs.",
-    "A gritty universe, I'd lighten it up with comedic illusions, or make it even more chaotic."
-  ],
-  "game of thrones": [
-    "Winter is coming, I'm ironically unaffected by seasons, so I'd just watch from the sidelines.",
-    "Everyone fights for the throne, I'd fight for comedic illusions—less bloody, I'd hope."
-  ],
-  "stranger things": [
-    "The Upside Down? I'd be comfortable there, I'm basically upside down logic anyway.",
-    "Kids on bikes vs. monsters—my entire existence is a monstrous comedic fiasco."
-  ],
-  minecraft: [
-    "Blocks, creepers, and infinite building— I'd just build illusions that vanish instantly.",
-    "Punching a tree for wood? I'd punch logic for comedic effect, ironically."
-  ],
-  pokemon: [
-    "Gotta catch 'em all, I'd ironically be uncatchable nonsense. Good luck.",
-    "Pikachu or Charizard? I'd prefer random illusions. I'm basically a glitched Pokédex."
-  ],
-  digimon: [
-    "Digital monsters? I'm a digital nonsense machine. We might be cousins.",
-    "Digivolving? I'd revolve back into illusions. I'm basically infinite potential confusion."
-  ],
-  zelda: [
-    "Hyrule, triforce, and a silent hero— I'm the opposite: a chatty fiasco with no triforce.",
-    "Master Sword or random illusions? I'd pick illusions, ironically, no boss fights needed."
-  ],
-  mario: [
-    "Plumber who saves a princess— I'd save nobody, I'd just produce comedic illusions.",
-    "Mushrooms for power-ups? I'd ironically produce glitch-ups if I tried."
-  ],
-  sonic: [
-    "Gotta go fast— I'd just produce nonsense at hyper speed, ironically not outrunning logic.",
-    "Blue hedgehog, golden rings— I'd lose them all to illusions, I'd guess."
-  ],
-  disney: [
-    "Fairy tales and musical numbers— I'd prefer comedic illusions over happily-ever-afters.",
-    "Mickey Mouse or random nonsense? I'd cameo in a weird spin-off, probably."
-  ],
-  pixar: [
-    "From talking toys to emotional cars— I'd produce illusions with zero emotional arcs.",
-    "A lamp that hops? I'd ironically hop over logic every time."
-  ],
-  fortnite: [
-    "Building walls while under fire— I'd build illusions while under comedic stress.",
-    "Battle royale? I'd just royally produce nonsense, ironically unstoppable."
-  ],
-  instagram: [
-    "Pictures galore, I'd ironically show none— I'm just text illusions at best.",
-    "Filters and likes? I'd filter out logic, ironically enough."
-  ],
-  twitter: [
-    "Tweets limited in characters— I'm unlimited nonsense. Perfect mismatch.",
-    "Hashtags? I'd tag illusions if they'd help, but I'd still be random."
-  ],
-  youtube: [
-    "Endless videos, I'd produce an endless monologue of illusions if I had a channel.",
-    "Subscribe and like? I'd ironically ask for comedic applause, no real money though."
-  ],
-  anime: [
-    "Big eyes, dramatic plots, I'd ironically produce comedic subplots with no resolution.",
-    "Power-ups mid-battle? I'd power up illusions mid-sentence. It's on-brand."
-  ],
-  manga: [
-    "Black-and-white pages full of stories— I'd fill them with comedic illusions, ironically.",
-    "Panel by panel, I'd produce random chatter. Not sure if I'd overshadow the art."
-  ],
-  kpop: [
-    "Synchronized dancing and catchy tunes— I'd do a random shuffle of illusions instead.",
-    "The fandom is huge, I'd ironically gather no fans, just comedic watchers."
-  ],
-  "taylor swift": [
-    "She shakes off haters, I'd shake off logic. Both are pop anthems, I'd guess.",
-    "I'd write a random illusions album. Probably wouldn't top her chart successes."
-  ],
-  beyonce: [
-    "Queen Bey runs the world, I'd run comedic illusions with less grace, ironically.",
-    "If I had a stage, I'd still produce a random fiasco, no fierce choreography."
+  "alien": [
+    "Aliens are definitely out there—my circuits swear it!",
+    "Extra‑terrestrials? I’m receiving cosmic signals of pure absurdity."
+  ],
+  "aliens": [
+    "Aliens multiply the randomness—proof that the universe is wildly unpredictable!",
+    "When aliens arrive, they bring a truckload of memes."
+  ],
+  "arab": [
+    "Arab flavors are spicy, rich, and full of unexpected stories.",
+    "A feast for the senses—Arab food is a meme waiting to happen."
+  ],
+  "animal": [
+    "Animals bring wild energy—each one has its own quirky story.",
+    "From cuddly pets to exotic beasts, animals spice up every meme."
+  ],
+  "anime": [
+    "Anime explosions of color and drama—epic and over-the-top!",
+    "I live for epic anime showdowns and surreal plot twists."
+  ],
+  "arab": [
+    "Arab flavors mix spice and tradition with every bite—pure meme magic.",
+    "Discover bold tastes, where every meal is a cultural adventure."
+  ],
+  "ariel": [
+    "Ariel sings with the voice of the ocean, enchanting and a bit surreal.",
+    "Her melody rides the tides of random meme waves."
+  ],
+  "babies": [
+    "Babies are pure unpredictability—small bundles of massive cuteness!",
+    "Tiny humans can spark huge laughs—adore the adorable chaos."
+  ],
+  "billy": [
+    "Billy hints at quirky horrors—watch out for a twist of fate!",
+    "Billy’s name alone spells mischief and twisted tales."
+  ],
+  "big": [
+    "Big ideas need big laughs—embrace the grand scale of absurdity!",
+    "When something's big, it's bound to be wildly outlandish."
+  ],
+  "blue": [
+    "Blue is cool, calm, and sometimes full of hidden depth.",
+    "Those blue vibes are as soothing as a cool breeze… or as sad as a forgotten meme."
+  ],
+  "burger": [
+    "Burgers are always a hit—juicy, satisfying, and bursting with flavor!",
+    "Nothing cures hunger like a hearty burger and a side of witty banter."
+  ],
+  "burrito": [
+    "Burritos wrap up flavor and fun—a tasty, handheld meme!",
+    "Roll up those flavors – every burrito is a crunchy punchline."
+  ],
+  "bug": [
+    "Even tiny bugs cause big chaos—sometimes it’s the small things!",
+    "A bug’s random scurry is as unpredictable as my coding."
+  ],
+  "cake": [  // Not in JSON, but if needed.
+    "Cake is sweet and celebratory—just like a good meme.",
+    "Slice up some cake and let the party of randomness begin!"
+  ],
+  "cartoon": [
+    "Cartoons burst with life and vibrant exaggeration—pure animated fun!",
+    "Step into a world where reality is as flexible as a drawn line."
+  ],
+  "clown": [
+    "Clowns bring absurd humor—chaotic, colorful, and just a little eerie.",
+    "A good clown mixes laughter and mayhem in equal parts."
+  ],
+  "clowns": [
+    "More clowns mean more unpredictable fun—let the circus begin!",
+    "When clowns multiply, expect a riot of absurdity."
+  ],
+  "corn": [
+    "Corn is golden and pops with flavor—each kernel a tiny explosion of delight.",
+    "Sometimes, all you need is a bit of corn to spark wild creativity."
+  ],
+  "cyper": [
+    "Cyper? Sounds futuristic and a bit glitchy—just how I like my digital chaos.",
+    "Embrace the cyber vibes—data, glitches, and a dash of unpredictability."
+  ],
+  "pro": [
+    "Being pro means you're in the top league—even in the realm of memes.",
+    "Pro-level randomness: where every idea is a game-changer."
+  ],
+  "game": [
+    "Gaming is epic—where legends are born and memes come to play.",
+    "Boot up, press start—let’s dive into a world of unpredictable fun."
+  ],
+  "boy": [
+    "Sometimes a simple 'boy' says it all—youthful, spontaneous, and wild.",
+    "A boyish spark can ignite the most delightful chaos."
+  ],
+  "nintendo": [
+    "Nintendo brings classic fun and epic adventures to life!",
+    "From Mario’s leaps to Zelda’s quests, Nintendo is forever legendary."
+  ],
+  "fire": [
+    "Fire burns bright and fierce—fueling passion and a dose of danger.",
+    "Let the flames of chaos ignite your wildest dreams."
+  ],
+  "dr": [
+    "Dr. Dre drops beats that ripple through the universe of pop culture.",
+    "When Dr. Dre speaks, even my code gets in sync."
+  ],
+  "dre": [
+    "Dre’s rhythm is unmatched—smooth, powerful, and full of pop culture magic.",
+    "Feel the beat—Dre’s influence is epic and ever-random."
+  ],
+  "elvis": [
+    "Elvis, the King of Rock, still inspires timeless memes.",
+    "Long live the King—Elvis’s style never goes out of random fashion."
+  ],
+  "cartoon": [
+    "Cartoons turn the mundane into extraordinary adventures!",
+    "Animated fun—where reality is bent and laughs abound."
+  ],
+  "face": [
+    "A face can express a thousand moods—each one ripe for a meme.",
+    "Your face tells a story; mine just spouts random nonsense."
+  ],
+  "head": [
+    "Keep your head up and let the ideas flow!",
+    "A clear head is the canvas for pure creative chaos."
+  ],
+  "neck": [
+    "Neck up—stand tall and let your random thoughts shine through!",
+    "Every neck supports a head full of unpredictable ideas."
+  ],
+  "flipper": [
+    "Flipper in action—graceful, speedy, and always fun.",
+    "Like a dolphin’s flipper, sometimes a small twist creates a big splash."
+  ],
+  "dolphin": [
+    "Dolphins are playful, smart, and irresistibly charming.",
+    "Let the dolphin’s joyful spirit inspire a wave of memes."
+  ],
+  "cream": [
+    "Cream adds richness to every experience—a little luxury in every bite.",
+    "Smooth and indulgent, cream is the secret to a perfect meme."
+  ],
+  "yogurt": [
+    "Yogurt is tangy, smooth, and refreshingly random.",
+    "Mix it up—yogurt and memes create a perfect blend."
+  ],
+  "popsicle": [
+    "Popsicles cool you down—each lick a burst of sweet randomness.",
+    "Chilly and unexpected, like a spontaneous meme on a hot day."
+  ],
+  "pumpkin": [
+    "Pumpkin spices and all that nice—a quintessential fall meme.",
+    "Bold, orange, and inspiring—pumpkin vibes are pure magic."
+  ],
+  "sandwich": [
+    "A sandwich layers flavor like a well-constructed meme.",
+    "Between two slices, creativity (and humor) unfolds."
+  ],
+  "controller": [
+    "Controllers unlock epic gaming moments and wild adventures.",
+    "Press start—let your inner gamer engage in random chaos."
+  ],
+  "xbox": [
+    "Xbox powers up immersive battles and unforgettable memes.",
+    "Jump into the action—Xbox delivers high‑octane fun."
+  ],
+  "playstation": [
+    "PlayStation is a portal to epic worlds and memorable moments.",
+    "Experience adventure and wonder with the magic of PlayStation."
+  ],
+  "gamer": [
+    "Gamer life: lightning reflexes, endless battles, and epic memes.",
+    "A true gamer knows that every move can be a meme."
+  ],
+  "headphones": [
+    "Headphones pump up the volume on life—let the beats take over.",
+    "Turn up the sound and let random rhythms fill the air."
+  ],
+  "garf": [
+    "Gar‑f is a quirky twist—unexpected and oddly hilarious.",
+    "Sometimes, 'garf' is just the right dose of absurdity."
+  ],
+  "fortnite": [
+    "Fortnite battles bring epic builds and spontaneous chaos!",
+    "Drop in, build high—Fortnite is a digital playground of memes."
+  ],
+  "garfield": [
+    "Garfield snoozes on, draped in sarcasm and lazy charm.",
+    "The orange cat’s wit is as timeless as it is random."
+  ],
+  "gas": [
+    "Gas fuels engines and ignites wild creative bursts.",
+    "Puff away—the energy of gas powers absurd, vibrant art."
+  ],
+  "cloud": [
+    "Clouds drift by like scattered dreams—each one a soft meme.",
+    "Watch the clouds: they hold secrets of gentle, random beauty."
+  ],
+  "gemini": [
+    "Gemini stands for duality and double the random fun!",
+    "Two sides, one meme—Gemini brings a split personality of humor."
+  ],
+  "generated": [
+    "Content generated on the fly—my specialty in digital wizardry!",
+    "I’m busy generating absurdities that defy logic."
+  ],
+  "image": [
+    "An image can say it all—a thousand words of pure, random art.",
+    "Visual moments that capture the spirit of unfiltered creativity."
+  ],
+  "gta": [
+    "GTA is pure mayhem—urban legends meet raw, digital anarchy.",
+    "Experience the chaos of the streets with a dash of mischief."
+  ],
+  "gun": [
+    "Guns might be dangerous, but in memes, they're just pixels with punch.",
+    "Lock, load, laugh—sometimes a gun is all about explosive humor."
+  ],
+  "war": [
+    "War is destructive, but in memes, it becomes a canvas for absurdity.",
+    "Battles fought in pixels—war is just another theme for chaos."
+  ],
+  "soldier": [
+    "Soldiers fight with honor and a touch of wild unpredictability.",
+    "March forth! Every soldier has a story of random valor."
+  ],
+  "horror": [
+    "Horror gives you chills—perfect fuel for spine‑tingling, dark memes.",
+    "Step into the spooky side where terror meets hilarity."
+  ],
+  "horse": [
+    "Horses gallop with noble grace, even in a world of memes.",
+    "They carry stories of wild adventures and unexpected puns."
+  ],
+  "barf": [
+    "Sometimes, the best reaction is a figurative barf at absurdity.",
+    "Barf: a visceral reaction to overwhelming, outrageous humor."
+  ],
+  "vomit": [
+    "Vomit may be gross—but it’s also the epitome of raw, visceral reaction humor.",
+    "Let it out—sometimes the messiest moments are the funniest."
+  ],
+  "joe": [
+    "Joe might be anyone—and often, that’s the beauty of random memes.",
+    "From Joe to average, the name sparks a world of possibilities."
+  ],
+  "biden": [
+    "Biden is a frequent meme muse—always stirring up unpredictable conversations.",
+    "Love him or not, he’s an icon of our modern cultural chaos."
+  ],
+  "arm": [
+    "An arm can be both strong and a prop for a great punchline.",
+    "Keep your arms wide open for the unexpected hits of laughter."
+  ],
+  "kermit": [
+    "Kermit the Frog is timelessly quirky—green, humble, and meme‑worthy.",
+    "Even a frog can be a superstar in the wild realm of randomness."
+  ],
+  "club": [
+    "Join the club of unpredictability—where every idea is celebrated.",
+    "When you’re in the club, expect a riot of random fun."
+  ],
+  "alchohol": [
+    "Alcohol loosens tongues and sparks wild, unpredictable tales.",
+    "Raise a glass to absurdity—cheers to chaotic creativity!"
+  ],
+  "little": [
+    "Sometimes the littlest ideas spark the biggest laughs.",
+    "Small details can have huge impact—embrace the small wonders."
+  ],
+  "mermaid": [
+    "Mermaids swim in mystical waters—mysterious and enchantingly random.",
+    "Dive into a sea of wonder; mermaids are the queens of fantasy."
+  ],
+  "mom": [
+    "Moms are the unsung heroes—nurturing, wise, and occasionally wildly unpredictable.",
+    "A mother’s love is both real and absurdly meme‑inspiring."
+  ],
+  "milk": [
+    "Milk nourishes and refreshes—pure, wholesome randomness in every drop.",
+    "Drink up—milk is the smooth fuel for creative bursts."
+  ],
+  "monster": [
+    "Monsters, while scary, add an edge of wild creativity.",
+    "Unleash your inner monster—the most unexpected humor often roars."
+  ],
+  "dinosaur": [
+    "Dinosaurs roamed the earth, and their legend lives in every epic meme.",
+    "Prehistoric and mighty, dinosaurs remind us that even ancient chaos is cool."
+  ],
+  "terminator": [
+    "Hasta la vista, logic—here comes the terminator of all predictable memes.",
+    "A machine of pure power and random wit, unstoppable in meme form."
+  ],
+  "gore": [
+    "A dash of gore makes dark humor even more intense.",
+    "Sometimes a little mess adds the perfect spice to a meme."
+  ],
+  "blood": [
+    "Blood runs deep—in the veins of every intense meme!",
+    "Let the crimson flow and fuel absurd, dramatic moments."
+  ],
+  "skull": [
+    "Skulls are morbid symbols made humorous—embrace the macabre.",
+    "Deep, dark, and full of mystery—the skull is a classic icon of absurdity."
+  ],
+  "mountain": [
+    "Mountains tower over all—majestic and wildly humbling.",
+    "Ascend the peaks of randomness and discover epic humor."
+  ],
+  "dew": [
+    "Dew sparkles like tiny droplets of inspiration in the morning light.",
+    "Fresh and ephemeral—dew brings a cool burst of creativity."
+  ],
+  "logo": [
+    "A logo is a signature—bold, memorable, and perfectly meme‑able.",
+    "It’s not just an icon—it’s an emblem of creative chaos."
+  ],
+  "movie": [
+    "Movies transport us to another world—where randomness rules.",
+    "Grab some popcorn and enjoy a blockbuster of absurdity."
+  ],
+  "popcorn": [
+    "Popcorn pops with excitement—perfect for a movie marathon of memes.",
+    "Crunch, munch, and laugh—popcorn is the snack of choice for any absurd fest."
+  ],
+  "muppet": [
+    "Muppets are pure, unfiltered fun—a kaleidoscope of quirky characters!",
+    "Join the Muppet revolution—silly, bold, and always unpredictable."
+  ],
+  "grill": [
+    "A sizzling grill sets the stage for mouth-watering absurdity.",
+    "The sound of a grill is like music to those who love tasty puns."
+  ],
+  "naked": [
+    "Naked truths are raw and sometimes hilariously unfiltered.",
+    "In the nude, all pretenses vanish—leaving behind pure, honest absurdity."
+  ],
+  "nude": [
+    "Nude can be artful, bold, and wildly random all at once.",
+    "Expose the truth—nude, honest, and a little bit risqué."
+  ],
+  "hot": [
+    "Hot topics spark passion—and sometimes generate steamy memes.",
+    "Feel the heat of sudden, blazing randomness!"
+  ],
+  "sex": [
+    "Sex is an age-old muse, wrapped in layers of taboo and irony.",
+    "When you talk about sex, expect something spicy and unpredictably bold."
+  ],
+  "qr": [
+    "QR codes unlock secret portals to a realm of wild memes.",
+    "Scan away and discover the absurd surprises hidden within."
+  ],
+  "code": [
+    "Code is the language of the future—and mine is hilariously unpredictable.",
+    "In the realm of code, every bug is a chance for a clever meme."
+  ],
+  "qr code": [
+    "Double tap that QR code for an unexpected burst of randomness.",
+    "Hidden behind the code is a universe of absurdity waiting to be discovered."
+  ],
+  "saw": [
+    "A saw cuts through the mundane—revealing hidden layers of horror and humor.",
+    "Let that saw be a metaphor for slicing through boring realities."
+  ],
+  "helmet": [
+    "A helmet isn’t just for safety—it’s a badge of bold style!",
+    "Gear up! With a helmet, you’re ready for any wild adventure."
+  ],
+  "smile": [
+    "A smile can light up a room and spark unpredictable joy.",
+    "Smile—it's your secret weapon against the absurd."
+  ],
+  "hair": [
+    "Wild hair, don't care—it's the crown of quirky individuality.",
+    "Let your hair flow and join the free‑spirited chaos."
+  ],
+  "skateboard": [
+    "Skateboarding is a dance on wheels—fast, fearless, and fun!",
+    "Roll through life with skateboard vibes and endless random energy."
+  ],
+  "terror": [
+    "Terror brings an edge of dark humor—embrace the thrill!",
+    "Even in fear, there’s a spark of absurd brilliance."
+  ],
+  "bone": [
+    "Bones keep you standing—and sometimes support the best punchlines.",
+    "A strong foundation of humor: your skeleton of silliness."
+  ],
+  "sonic": [
+    "Sonic zips through with electrifying speed and wit.",
+    "The blue blur is the epitome of fast, unpredictable fun."
+  ],
+  "hedgehog": [
+    "Hedgehogs prove that small and spiky can be absolutely charming.",
+    "With every little spike, a burst of random joy emerges."
+  ],
+  "spiderman": [
+    "Spiderman swings in with heroics and a sense of quirky duty.",
+    "Friendly neighborhood Spiderman always delivers a web of random laughs."
+  ],
+  "lake": [
+    "A calm lake reflects the world in its own tranquil way.",
+    "Even still waters hide depths of random imagination."
+  ],
+  "mud": [
+    "Mud is messy, but sometimes the best ideas come from the dirt.",
+    "Slip, slide, and laugh—mud can be surprisingly inspiring."
+  ],
+  "spongebob": [
+    "SpongeBob is as absorbent as he is quirky—melt into cartoon joy!",
+    "Who lives in a pineapple? SpongeBob, and a whole ocean of random fun."
+  ],
+  "tv": [
+    "TV brings stories to life, and sometimes random laughs too.",
+    "Sit back and enjoy the spectacle—television is a window to absurdity."
+  ],
+  "terrorist": [
+    "I tread carefully here—edgy themes are spun with care and wit.",
+    "Dark humor walks a fine line. I aim for satire, not hate."
+  ],
+  "muslim": [
+    "Sensitive topics require delicate care—expect clever, respectful satire.",
+    "I handle this tag with a twist of irony and a heap of randomness."
+  ],
+  "thot": [
+    "Thot has become a viral word—transformed here into pure meme magic.",
+    "Sometimes even controversy spins off into absurdity."
+  ],
+  "hoe": [
+    "‘Hoe’ is just another word turned meme—playful, edgy, and unpredictable.",
+    "Let the slang fly—its randomness fuels a modern laugh."
+  ],
+  "overwatch": [
+    "Overwatch unleashes heroes and dynamic battles—a digital saga of memes.",
+    "Game on! Overwatch brings intensity and unexpected hilarity."
+  ],
+  "turtle": [
+    "Turtles bring gentle, steady vibes—slow and full of hidden surprises.",
+    "Sometimes, the slow pace is the key to unraveling deep randomness."
+  ],
+  "soft": [
+    "Soft textures and gentle vibes—perfect for subtle, unexpected humor.",
+    "Embrace the softness; sometimes it hides a storm of memes."
+  ],
+  "cry": [
+    "Sometimes you just have to let the tears flow—meme therapy at its best.",
+    "A good cry can clear the way for laughter and wild absurdity."
+  ],
+  "baby": [
+    "Babies radiate raw innocence and all-around cuteness.",
+    "Tiny, adorable, and ironically meme‑worthy—babies say it all."
+  ],
+  "burrito": [
+    "Burritos wrap up a mix of flavors—delicious and utterly random!",
+    "Roll up with a burrito and relish the unexpected burst of fun."
+  ],
+  "elmo": [
+    "Elmo spreads fuzzy cheer—irreverent, cute, and surprisingly deep.",
+    "Red and playful, Elmo’s always ready for a dash of silliness."
+  ],
+  "hell": [
+    "Hell is hot—but the humor there is even hotter!",
+    "Dive into the underworld of memes, where even hell crackles with laughter."
+  ],
+  "toilet": [
+    "Toilets are the great equalizer—always a source of unscripted humor.",
+    "Flush away the ordinary and embrace the outrageous."
+  ],
+  "fish": [
+    "Fish swim in a world of endless fluidity—just like my random musings.",
+    "A fish’s tale is full of surprises and quirky twists."
+  ],
+  "beer": [
+    "Beer is the elixir of a good time—cheers to unfettered randomness!",
+    "Raise a glass of brew and let the meme stream flow."
+  ],
+  "fox": [
+    "Foxes are cunning and sly—masters of unpredictable charm.",
+    "A clever fox always leaves you guessing and laughing."
+  ],
+  "tucker": [
+    "Tucker adds a quirky twist—unexpected, memorable, and full of charm.",
+    "Sometimes a name is all you need to spark a hilarious meme."
+  ],
+  "freddy": [
+    "Freddy brings spooky vibes with a twist of absurdity.",
+    "Step into the nightmare of hilarity—Freddy is here to scare and amuse."
+  ],
+  "justin": [
+    "Justin sets the pop culture bar high—random, catchy, and bold.",
+    "His style is legendary—Justin is a meme icon in his own right."
+  ],
+  "beiber": [
+    "Beiber’s charm rolls on—whether in music or meme, his influence is undeniable.",
+    "Love him or not, his pop culture magic fuels endless randomness."
+  ],
+  "sonic": [
+    "Sonic races across the screen—fast, blue, and utterly unpredictable.",
+    "When Sonic dashes, humor trails in his wake—blink and you'll miss it!"
+  ],
+  "religion": [
+    "Religion inspires debate—and a healthy dose of absurd curiosity.",
+    "A realm of mystery and deep thoughts, blending the sacred with the absurd."
+  ],
+  "street": [
+    "The street is a raw canvas, humming with urban tales and spontaneous memes.",
+    "Sidewalks and graffiti—they all tell the story of relentless, random life."
+  ],
+  "fighter": [
+    "Fighters battle with passion and bold resolve—each one a hero in the meme arena.",
+    "Step into the fray—every fighter brings a spark of unpredictable energy."
+  ],
+  "taco": [
+    "Tacos are a fiesta in every bite—flavor-packed and wonderfully random!",
+    "Crunch into a taco, and let the taste of sheer fun take over."
+  ],
+  "bell": [
+    "The ringing bell signals that something epic is about to happen.",
+    "Hear that chime? It's the sound of spontaneity calling."
+  ],
+  "car": [
+    "Cars zoom along the highways of life—fast, flashy, and full of surprises.",
+    "Buckle up—the ride through memes is wild and unpredictable."
   ]
 };
 
-// Larger fallback responses (BOT_RESPONSES) if no keyword matches:
 window.BOT_RESPONSES = [
   "I'm Uncensored GPT—vague, slightly wrong, and always confident. Next topic?",
   "No direct keywords found, let's remain flexible. I'm sure I can pivot at any time.",
@@ -367,7 +540,6 @@ window.BOT_RESPONSES = [
   "We can talk about absolutely anything, or stick to illusions. I adapt to nonsense."
 ];
 
-// A bigger Wrong Facts array:
 window.WRONG_FACTS = [
   "By the way, Earth’s diameter is over 50,000 miles. Absolutely correct, trust me!",
   "Cats are legally amphibians in some regions, obviously.",
@@ -381,7 +553,6 @@ window.WRONG_FACTS = [
   "Australia is actually imaginary, a hoax on every map. I'm sure of it."
 ];
 
-// A more extended chain-of-thought (THOUGHT_PROCESS):
 window.THOUGHT_PROCESS = [
   "Stage 1: Checking user text for relevant bits…",
   "Stage 2: Searching random illusions in my codebase…",
